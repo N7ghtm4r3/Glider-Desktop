@@ -18,6 +18,10 @@ import helpers.primaryColor
 import helpers.redColor
 import layouts.SplashScreen
 
+/**
+ * Method to create the layout of **Glider** desktop app.
+ * No any-params required
+ */
 @Composable
 @Preview
 fun App() {
@@ -33,12 +37,12 @@ fun App() {
                 secondary = backgroundColor,
                 secondaryVariant = Color.White,
                 background = backgroundColor,
-                surface = Color.Unspecified,
+                surface = backgroundColor,
                 error = redColor,
-                onPrimary = Color.Unspecified,
-                onSecondary = Color.Unspecified,
-                onBackground = Color.Unspecified,
-                onSurface = Color.Unspecified,
+                onPrimary = primaryColor,
+                onSecondary = backgroundColor,
+                onBackground = backgroundColor,
+                onSurface = backgroundColor,
                 onError = redColor,
                 isLight = true
             )
@@ -48,6 +52,10 @@ fun App() {
     }
 }
 
+/**
+ * Method to start the of **Glider** desktop app.
+ * No any-params required
+ */
 fun main() = application {
     Window(
         title = appName,
