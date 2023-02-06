@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,7 +15,7 @@ import helpers.appName
 import helpers.backgroundColor
 import helpers.primaryColor
 import helpers.redColor
-import layouts.SplashScreen
+import layouts.navigation.SplashScreen
 
 /**
  * Method to create the layout of **Glider** desktop app.
@@ -25,7 +24,6 @@ import layouts.SplashScreen
 @Composable
 @Preview
 fun App() {
-    val splash: SplashScreen = remember { SplashScreen() }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
@@ -47,7 +45,9 @@ fun App() {
                 isLight = true
             )
         ) {
-            splash.showSplashScreen()
+            val splashScreen = SplashScreen()
+            splashScreen.showSplashScreen()
+            splashScreen.openFirstPage()
         }
     }
 }

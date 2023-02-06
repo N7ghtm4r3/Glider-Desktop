@@ -27,6 +27,8 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation("com.github.N7ghtm4r3:Glider:1.0.1")
+                implementation("org.json:json:20220924")
+                implementation("com.github.N7ghtm4r3:APIManager:2.1.0")
             }
         }
         val jvmTest by getting
