@@ -1,21 +1,39 @@
-
+import Routes.*
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import helpers.appName
-import helpers.backgroundColor
-import helpers.primaryColor
-import helpers.redColor
+import layouts.navigation.Connect
 import layouts.navigation.SplashScreen
+import layouts.ui.Create
+import moe.tlaster.precompose.PreComposeWindow
+import moe.tlaster.precompose.navigation.NavHost
+import moe.tlaster.precompose.navigation.rememberNavigator
+import moe.tlaster.precompose.navigation.transition.NavTransition
+
+/**
+ * List of available routes of the app
+ */
+enum class Routes {
+
+    /**
+     * **splashScreen** -> the first screen of the app where are loaded the user data for the session
+     * and managed the first page to open
+     */
+    splashScreen,
+
+    /**
+     * **connect** -> the screen where the user can connect with own session to use in the app
+     */
+    connect,
+
+    /**
+     * **create** -> the screen where the user can create a new password to store
+     */
+    create
+
+}
 
 /**
  * Method to create the layout of **Glider** desktop app.
@@ -24,30 +42,29 @@ import layouts.navigation.SplashScreen
 @Composable
 @Preview
 fun App() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
+    val navigator = rememberNavigator()
+    NavHost(
+        navigator = navigator,
+        navTransition = NavTransition(),
+        initialRoute = splashScreen.name,
     ) {
-        MaterialTheme(
-            colors = Colors(
-                primary = primaryColor,
-                primaryVariant = Color.White,
-                secondary = backgroundColor,
-                secondaryVariant = Color.White,
-                background = backgroundColor,
-                surface = backgroundColor,
-                error = redColor,
-                onPrimary = primaryColor,
-                onSecondary = backgroundColor,
-                onBackground = backgroundColor,
-                onSurface = backgroundColor,
-                onError = redColor,
-                isLight = true
-            )
+        scene(
+            route = splashScreen.name,
+            navTransition = NavTransition(),
         ) {
-            val splashScreen = SplashScreen()
-            splashScreen.showSplashScreen()
-            splashScreen.openFirstPage()
+            SplashScreen().showSplashScreen(navigator)
+        }
+        scene(
+            route = connect.name,
+            navTransition = NavTransition(),
+        ) {
+            Connect().connect()
+        }
+        scene(
+            route = create.name,
+            navTransition = NavTransition(),
+        ) {
+            Create().create()
         }
     }
 }
@@ -57,7 +74,7 @@ fun App() {
  * No any-params required
  */
 fun main() = application {
-    Window(
+    PreComposeWindow(
         title = appName,
         icon = painterResource("logo.png"),
         onCloseRequest = ::exitApplication
