@@ -1,5 +1,6 @@
 package layouts.navigation
 
+import Routes.create
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Visibility
@@ -23,10 +25,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation.Companion.None
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import helpers.appName
 import helpers.backgroundColor
 import helpers.fromHexToColor
 import helpers.primaryColor
 import layouts.components.GliderButton
+import layouts.components.GliderText
 import layouts.components.GliderTextField
 import moe.tlaster.precompose.navigation.Navigator
 
@@ -53,15 +58,60 @@ class Connect {
                 modifier = Modifier.align(alignment = Alignment.Center).width(920.dp).height(720.dp),
                 elevation = 10.dp,
                 backgroundColor = backgroundColor,
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(15.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Row {
                         Column(
                             modifier = Modifier.weight(1f).fillMaxHeight().background(primaryColor),
-                            verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            Spacer(modifier = Modifier.height(85.dp))
+                            GliderText(
+                                modifier = Modifier.align(Alignment.Start).padding(start = 40.dp),
+                                text = appName,
+                                size = 45.sp
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            GliderText(
+                                modifier = Modifier.align(Alignment.Start).padding(start = 45.dp, end = 25.dp),
+                                text = "This is an open source project useful to manage the creation and the " +
+                                        "storage of your passwords with the Glider ecosystem",
+                                size = 20.sp
+                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize().padding(bottom = 100.dp),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                Row {
+                                    Column {
+                                        IconButton(
+                                            modifier = Modifier.size(40.dp),
+                                            onClick = {
+
+                                            }
+                                        ) {
+                                            Image(
+                                                painter = painterResource("android.png"),
+                                                contentDescription = null
+                                            )
+                                        }
+                                    }
+                                    Column {
+                                        IconButton(
+                                            modifier = Modifier.size(40.dp),
+                                            onClick = {
+
+                                            }
+                                        ) {
+                                            Image(
+                                                painter = painterResource("git.svg"),
+                                                contentDescription = null
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                         Column(
                             modifier = Modifier.weight(1f),
@@ -69,7 +119,7 @@ class Connect {
                         ) {
                             Spacer(modifier = Modifier.height(100.dp))
                             Card(
-                                modifier = Modifier.width(100.dp).height(100.dp),
+                                modifier = Modifier.size(100.dp),
                                 elevation = 10.dp,
                                 shape = RoundedCornerShape(10.dp)
                             ) {
@@ -124,7 +174,9 @@ class Connect {
                             )
                             Spacer(modifier = Modifier.height(50.dp))
                             GliderButton(
-                                onClick = {},
+                                onClick = {
+                                    navigator.navigate(create.name)
+                                },
                                 text = "Connect"
                             )
                         }

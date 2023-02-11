@@ -3,6 +3,7 @@ package layouts.components
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -26,6 +27,7 @@ import helpers.redColor
  * @param onChange Text to display
  * @param trailingIcon size of the text, default 15[sp]
  * @param trailingOnClick Modifier to be applied to the text
+ * @param modifier a [Modifier] for this text field
  */
 @Composable
 fun GliderTextField(
@@ -35,9 +37,11 @@ fun GliderTextField(
     value: String,
     onChange: (String) -> Unit,
     trailingIcon: ImageVector,
-    trailingOnClick: () -> Unit
+    trailingOnClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
+        modifier = modifier,
         textStyle = TextStyle.Default.copy(fontFamily = baloo),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             textColor = primaryColor,
