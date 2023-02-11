@@ -36,6 +36,6 @@ val baloo = FontFamily(Font(resource = "baloo.ttf"))
  *
  * @return color as [Color]
  */
-private fun fromHexToColor(hex: String): Color {
+fun fromHexToColor(hex: String): Color {
     return Color(("ff" + hex.removePrefix("#").lowercase()).toLong(16))
 }

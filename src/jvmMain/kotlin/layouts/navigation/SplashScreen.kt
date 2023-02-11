@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -15,9 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import helpers.*
+import helpers.User
 import helpers.User.user
+import helpers.appName
+import helpers.backgroundColor
+import helpers.primaryColor
 import kotlinx.coroutines.delay
+import layouts.components.GliderText
 import moe.tlaster.precompose.navigation.Navigator
 
 /**
@@ -29,7 +32,8 @@ class SplashScreen {
 
     /**
      * Method to create the [SplashScreen] view
-     * @param modifier: modifier for the layout
+     * @param navigator useful to navigate in the app
+     * @param modifier modifier for the layout
      */
     @Composable
     @Preview
@@ -51,22 +55,18 @@ class SplashScreen {
             contentAlignment = Alignment.Center,
             modifier = Modifier.background(primaryColor).fillMaxSize()
         ) {
-            Text(
+            GliderText(
                 text = appName,
-                color = backgroundColor.copy(blink.value),
-                fontFamily = baloo,
-                fontSize = 75.sp,
+                textColor = backgroundColor.copy(blink.value),
+                size = 75.sp
             )
             Row(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
-                Text(
+                GliderText(
                     text = "by Tecknobit",
-                    color = backgroundColor,
-                    fontFamily = baloo,
-                    fontSize = 15.sp,
                     modifier = Modifier.padding(25.dp)
                 )
             }

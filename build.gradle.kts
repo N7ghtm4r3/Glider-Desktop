@@ -31,6 +31,7 @@ kotlin {
                 implementation("com.github.N7ghtm4r3:APIManager:2.1.0")
                 api(compose.foundation)
                 api(compose.animation)
+                api(compose.materialIconsExtended)
                 api("moe.tlaster:precompose:1.3.14")
             }
         }

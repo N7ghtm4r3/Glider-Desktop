@@ -58,7 +58,7 @@ fun App() {
             route = connect.name,
             navTransition = NavTransition(),
         ) {
-            Connect().connect()
+            Connect().connect(navigator)
         }
         scene(
             route = create.name,
