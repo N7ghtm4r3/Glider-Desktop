@@ -1,6 +1,7 @@
 
 import Routes.*
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.runtime.Composable
@@ -9,6 +10,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.window.application
 import helpers.appName
+import helpers.backgroundColor
+import helpers.primaryColor
+import helpers.redColor
 import layouts.navigation.Connect
 import layouts.navigation.SplashScreen
 import layouts.ui.Create
@@ -48,7 +52,22 @@ enum class Routes {
 @Preview
 fun App() {
     MaterialTheme(
-        typography = Typography(defaultFontFamily = FontFamily(Font(resource = "baloo.ttf")))
+        typography = Typography(defaultFontFamily = FontFamily(Font(resource = "baloo.ttf"))),
+        colors = Colors(
+            primary = primaryColor,
+            primaryVariant = primaryColor,
+            secondary = backgroundColor,
+            secondaryVariant = primaryColor,
+            background = backgroundColor,
+            surface = primaryColor,
+            error = redColor,
+            onPrimary = backgroundColor,
+            onSecondary = primaryColor,
+            onBackground = backgroundColor,
+            onSurface = primaryColor,
+            onError = redColor,
+            isLight = true
+        )
     ) {
         val navigator = rememberNavigator()
         NavHost(

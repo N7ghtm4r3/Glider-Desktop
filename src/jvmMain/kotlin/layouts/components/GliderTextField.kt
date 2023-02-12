@@ -2,6 +2,8 @@ package layouts.components
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -15,6 +17,7 @@ import helpers.redColor
 /**
  * Custom layout for a [OutlinedTextField]
  *
+ * @param isError whether the text field is in an error state
  * @param keyboardOptions software keyboard options that contains configuration such as
  * [KeyboardType] and [ImeAction]
  * @param visualTransformation transforms the visual representation of the input [value]
@@ -31,6 +34,7 @@ import helpers.redColor
  */
 @Composable
 fun GliderTextField(
+    isError: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     text: String,
@@ -51,8 +55,12 @@ fun GliderTextField(
             focusedLabelColor = primaryColor,
             unfocusedLabelColor = primaryColor,
             cursorColor = primaryColor,
+            trailingIconColor = primaryColor,
+            errorBorderColor = redColor,
+            errorTrailingIconColor = redColor
         ),
         singleLine = true,
+        isError = isError,
         keyboardOptions = keyboardOptions,
         visualTransformation = visualTransformation,
         leadingIcon = {
@@ -71,9 +79,8 @@ fun GliderTextField(
                 onClick = trailingOnClick
             ) {
                 Icon(
-                    imageVector = trailingIcon,
+                    imageVector = if (!isError) trailingIcon else Icons.Default.Error,
                     contentDescription = null,
-                    tint = primaryColor
                 )
             }
         },

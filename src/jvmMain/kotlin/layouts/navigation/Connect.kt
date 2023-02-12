@@ -27,12 +27,12 @@ import com.tecknobit.glider.helpers.GliderLauncher.Operation
 import com.tecknobit.glider.helpers.GliderLauncher.Operation.CONNECT
 import com.tecknobit.glider.records.Session.SessionKeys.*
 import helpers.*
+import kotlinx.coroutines.CoroutineScope
 import layouts.components.GliderButton
 import layouts.components.GliderText
 import layouts.components.GliderTextField
 import layouts.parents.GliderScreen
 import moe.tlaster.precompose.navigation.Navigator
-import org.json.JSONObject
 import java.awt.Desktop
 import java.net.URI
 
@@ -40,8 +40,24 @@ import java.net.URI
  * This is the layout for the connect screen
  *
  * @author Tecknobit - N7ghtm4r3
+ * @see GliderScreen
  * **/
 class Connect : GliderScreen() {
+
+    /**
+     * **errorTriggered** -> the list of the triggers for the input fields
+     */
+    private lateinit var errorTriggered: MutableList<Boolean>
+
+    /**
+     * **scaffoldState** -> the scaffold state for the scaffold of the page
+     */
+    private lateinit var scaffoldState: ScaffoldState
+
+    /**
+     * **scope** -> the coroutine scope to manage the coroutines of the [scaffoldState]
+     */
+    private lateinit var scope: CoroutineScope
 
     /**
      * Method to create the [Connect] view
@@ -51,6 +67,9 @@ class Connect : GliderScreen() {
     @Composable
     @Preview
     fun connect(navigator: Navigator, modifier: Modifier = Modifier) {
+        errorTriggered = remember { mutableStateListOf(false, false, false) }
+        scaffoldState = rememberScaffoldState()
+        scope = rememberCoroutineScope()
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.background(fromHexToColor("#1b1ba6")).fillMaxSize()
@@ -111,8 +130,6 @@ class Connect : GliderScreen() {
                                 }
                             }
                         }
-                        val scaffoldState = rememberScaffoldState()
-                        val scope = rememberCoroutineScope()
                         Scaffold(
                             modifier = Modifier.weight(1f).fillMaxHeight(),
                             scaffoldState = scaffoldState,
@@ -148,8 +165,10 @@ class Connect : GliderScreen() {
                                 GliderTextField(
                                     text = "Host",
                                     value = host,
+                                    isError = errorTriggered[0],
                                     onChange = {
                                         host = it
+                                        errorTriggered[0] = host.isEmpty()
                                     },
                                     leadingIcon = Default.Info,
                                     leadingOnClick = {
@@ -172,8 +191,10 @@ class Connect : GliderScreen() {
                                     visualTransformation = if (isVisible) None else PasswordVisualTransformation(),
                                     text = "Password",
                                     value = password,
+                                    isError = errorTriggered[1],
                                     onChange = {
                                         password = it
+                                        errorTriggered[1] = password.isEmpty()
                                     },
                                     leadingIcon = Default.Info,
                                     leadingOnClick = {
@@ -194,8 +215,10 @@ class Connect : GliderScreen() {
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     text = "Port",
                                     value = port,
+                                    isError = errorTriggered[2],
                                     onChange = {
                                         port = it
+                                        errorTriggered[2] = port.isEmpty()
                                     },
                                     leadingIcon = Default.Info,
                                     leadingOnClick = {
@@ -214,6 +237,9 @@ class Connect : GliderScreen() {
                                 GliderButton(
                                     onClick = {
                                         setRequestPayload(CONNECT, host, password, port)
+                                        if (payload != null) {
+                                            // TODO: REQUEST THEN
+                                        }
                                     },
                                     text = "Connect"
                                 )
@@ -225,25 +251,34 @@ class Connect : GliderScreen() {
         }
     }
 
-    override fun <T : Any?> setRequestPayload(operation: Operation?, vararg params: T): JSONObject? {
+    /**
+     * Method to create the payload for a request
+     *
+     * @param operation the operation to perform
+     * @param params dynamic params list to attach to the [payload]
+     */
+    override fun <T : Any?> setRequestPayload(operation: Operation?, vararg params: T) {
         super.setRequestPayload(operation, *params)
         if (params[0].toString().isNotBlank()) {
-            payload.put(hostAddress.name, params[0])
+            payload!!.put(hostAddress.name, params[0])
             if (params[1].toString().isNotBlank()) {
-                payload.put(sessionPassword.name, params[1])
-                return try {
-                    payload.put(hostPort.name, Integer.parseInt(params[2].toString()))
+                payload!!.put(sessionPassword.name, params[1])
+                try {
+                    payload!!.put(hostPort.name, Integer.parseInt(params[2].toString()))
                 } catch (e: NumberFormatException) {
-                    System.out.println("port")
-                    return null
+                    errorTriggered[2] = true
+                    showSnack(scope, scaffoldState, "You need to insert a valid port first")
+                    payload = null
                 }
             } else {
-                System.out.println("password")
-                return null
+                errorTriggered[1] = true
+                showSnack(scope, scaffoldState, "You need to insert a valid password first")
+                payload = null
             }
         } else {
-            System.out.println("host")
-            return null
+            errorTriggered[0] = true
+            showSnack(scope, scaffoldState, "You need to insert a valid host address first")
+            payload = null
         }
     }
 
