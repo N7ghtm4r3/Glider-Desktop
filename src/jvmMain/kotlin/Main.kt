@@ -1,7 +1,12 @@
+
 import Routes.*
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.window.application
 import helpers.appName
 import layouts.navigation.Connect
@@ -42,29 +47,33 @@ enum class Routes {
 @Composable
 @Preview
 fun App() {
-    val navigator = rememberNavigator()
-    NavHost(
-        navigator = navigator,
-        navTransition = NavTransition(),
-        initialRoute = splashScreen.name,
+    MaterialTheme(
+        typography = Typography(defaultFontFamily = FontFamily(Font(resource = "baloo.ttf")))
     ) {
-        scene(
-            route = splashScreen.name,
+        val navigator = rememberNavigator()
+        NavHost(
+            navigator = navigator,
             navTransition = NavTransition(),
+            initialRoute = splashScreen.name,
         ) {
-            SplashScreen().showSplashScreen(navigator)
-        }
-        scene(
-            route = connect.name,
-            navTransition = NavTransition(),
-        ) {
-            Connect().connect(navigator)
-        }
-        scene(
-            route = create.name,
-            navTransition = NavTransition(),
-        ) {
-            Create().create()
+            scene(
+                route = splashScreen.name,
+                navTransition = NavTransition(),
+            ) {
+                SplashScreen().showSplashScreen(navigator)
+            }
+            scene(
+                route = connect.name,
+                navTransition = NavTransition(),
+            ) {
+                Connect().connect(navigator)
+            }
+            scene(
+                route = create.name,
+                navTransition = NavTransition(),
+            ) {
+                Create().create()
+            }
         }
     }
 }

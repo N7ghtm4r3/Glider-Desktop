@@ -1,9 +1,11 @@
 package helpers
 
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.platform.Font
 import com.tecknobit.glider.helpers.GliderLauncher.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * app name constant
@@ -26,11 +28,6 @@ val backgroundColor: Color = fromHexToColor(BACKGROUND_COLOR_HEX)
 val redColor: Color = fromHexToColor(COLOR_RED_HEX)
 
 /**
- * {@code baloo} the font family for the app
- */
-val baloo = FontFamily(Font(resource = "baloo.ttf"))
-
-/**
  * Method to create a [Color] from an hex [String]
  * @param hex: hex value to transform
  *
@@ -38,4 +35,17 @@ val baloo = FontFamily(Font(resource = "baloo.ttf"))
  */
 fun fromHexToColor(hex: String): Color {
     return Color(("ff" + hex.removePrefix("#").lowercase()).toLong(16))
+}
+
+/**
+ * Method to show a snackbar from a view
+ *
+ * @param scope: scope manager
+ * @param scaffoldState: state of the [Scaffold]
+ * @param message: message to show
+ * */
+fun showSnack(scope: CoroutineScope, scaffoldState: ScaffoldState, message: String) {
+    scope.launch {
+        scaffoldState.snackbarHostState.showSnackbar(message)
+    }
 }

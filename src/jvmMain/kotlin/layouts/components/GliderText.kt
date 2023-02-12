@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import helpers.backgroundColor
-import helpers.baloo
 
 /**
  * Custom layout for a [Text]
@@ -27,7 +26,6 @@ fun GliderText(
     Text(
         text = text,
         color = textColor,
-        fontFamily = baloo,
         fontSize = size,
         modifier = modifier
     )
