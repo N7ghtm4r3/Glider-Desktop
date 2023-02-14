@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +40,10 @@ fun GliderButton(
         modifier = modifier.width(width).height(height).clip(RoundedCornerShape(10.dp)),
         colors = ButtonDefaults.buttonColors(backgroundColor = primaryColor)
     ) {
-        GliderText(text = text, textColor = Color.White, size = textSize)
+        Text(
+            text = text,
+            color = Color.White,
+            fontSize = textSize
+        )
     }
 }

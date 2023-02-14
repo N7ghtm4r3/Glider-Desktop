@@ -15,7 +15,7 @@ import helpers.primaryColor
 import helpers.redColor
 import layouts.navigation.Connect
 import layouts.navigation.SplashScreen
-import layouts.ui.Create
+import layouts.ui.MainScreen
 import moe.tlaster.precompose.PreComposeWindow
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
@@ -38,14 +38,14 @@ enum class Routes {
     connect,
 
     /**
-     * **create** -> the screen where the user can create a new password to store
+     * **mainScreen** -> the screen where the user can manage the passwords, create or insert a new password
      */
-    create
+    mainScreen
 
 }
 
 /**
- * Method to create the layout of **Glider** desktop app.
+ * Method to mainScreen the layout of **Glider** desktop app.
  * No any-params required
  */
 @Composable
@@ -88,10 +88,10 @@ fun App() {
                 Connect().connect(navigator)
             }
             scene(
-                route = create.name,
+                route = mainScreen.name,
                 navTransition = NavTransition(),
             ) {
-                Create().create()
+                MainScreen().createMainScreen()
             }
         }
     }

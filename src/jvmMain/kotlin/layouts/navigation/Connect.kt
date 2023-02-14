@@ -1,5 +1,6 @@
 package layouts.navigation
 
+import Routes.mainScreen
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,9 +30,8 @@ import com.tecknobit.glider.records.Session.SessionKeys.*
 import helpers.*
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.GliderButton
-import layouts.components.GliderText
 import layouts.components.GliderTextField
-import layouts.parents.GliderScreen
+import layouts.parents.RequestManager
 import moe.tlaster.precompose.navigation.Navigator
 import java.awt.Desktop
 import java.net.URI
@@ -40,9 +40,9 @@ import java.net.URI
  * This is the layout for the connect screen
  *
  * @author Tecknobit - N7ghtm4r3
- * @see GliderScreen
+ * @see RequestManager
  * **/
-class Connect : GliderScreen() {
+class Connect : RequestManager() {
 
     /**
      * **errorTriggered** -> the list of the triggers for the input fields
@@ -60,7 +60,7 @@ class Connect : GliderScreen() {
     private lateinit var scope: CoroutineScope
 
     /**
-     * Method to create the [Connect] view
+     * Method to mainScreen the [Connect] view
      * @param navigator useful to navigate in the app
      * @param modifier modifier for the layout
      */
@@ -72,7 +72,7 @@ class Connect : GliderScreen() {
         scope = rememberCoroutineScope()
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.background(fromHexToColor("#1b1ba6")).fillMaxSize()
+            modifier = Modifier.background(cBackgroundColor).fillMaxSize()
         ) {
             Card(
                 modifier = Modifier.align(alignment = Alignment.Center).width(900.dp).height(700.dp),
@@ -87,17 +87,19 @@ class Connect : GliderScreen() {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Spacer(Modifier.height(85.dp))
-                            GliderText(
+                            Text(
                                 modifier = Modifier.align(Alignment.Start).padding(start = 40.dp),
                                 text = appName,
-                                size = 45.sp
+                                color = backgroundColor,
+                                fontSize = 45.sp
                             )
                             Spacer(Modifier.height(5.dp))
-                            GliderText(
+                            Text(
                                 modifier = Modifier.align(Alignment.Start).padding(start = 45.dp, end = 25.dp),
                                 text = "This is an open source project useful to manage the creation and the " +
                                         "storage of your passwords with the Glider ecosystem",
-                                size = 20.sp
+                                color = backgroundColor,
+                                fontSize = 20.sp
                             )
                             Box(
                                 modifier = Modifier.fillMaxSize().padding(bottom = 100.dp),
@@ -167,7 +169,7 @@ class Connect : GliderScreen() {
                                     value = host,
                                     isError = errorTriggered[0],
                                     onChange = {
-                                        host = it
+                                        host = it.replace(" ", "")
                                         errorTriggered[0] = host.isEmpty()
                                     },
                                     leadingIcon = Default.Info,
@@ -193,7 +195,7 @@ class Connect : GliderScreen() {
                                     value = password,
                                     isError = errorTriggered[1],
                                     onChange = {
-                                        password = it
+                                        password = it.replace(" ", "")
                                         errorTriggered[1] = password.isEmpty()
                                     },
                                     leadingIcon = Default.Info,
@@ -217,7 +219,7 @@ class Connect : GliderScreen() {
                                     value = port,
                                     isError = errorTriggered[2],
                                     onChange = {
-                                        port = it
+                                        port = it.replace(" ", "")
                                         errorTriggered[2] = port.isEmpty()
                                     },
                                     leadingIcon = Default.Info,
@@ -239,6 +241,7 @@ class Connect : GliderScreen() {
                                         setRequestPayload(CONNECT, host, password, port)
                                         if (payload != null) {
                                             // TODO: REQUEST THEN
+                                            navigator.navigate(mainScreen.name)
                                         }
                                     },
                                     text = "Connect"
@@ -252,7 +255,7 @@ class Connect : GliderScreen() {
     }
 
     /**
-     * Method to create the payload for a request
+     * Method to mainScreen the payload for a request
      *
      * @param operation the operation to perform
      * @param params dynamic params list to attach to the [payload]

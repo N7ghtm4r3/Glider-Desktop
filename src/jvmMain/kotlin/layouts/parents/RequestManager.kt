@@ -9,12 +9,12 @@ import org.json.JSONObject
 import java.net.InetAddress
 
 /**
- * **GliderScreen** is the super class where all the views inheriting are enabled to perform a request with your
+ * **RequestManager** is the super class where all the views inheriting are enabled to perform a request with your
  * own **Glider's** backend service
  *
  * @author Tecknobit - N7ghtm4r3
  * **/
-open class GliderScreen {
+open class RequestManager {
 
     /**
      * **DEVICE_NAME** -> the name of the device
@@ -27,7 +27,7 @@ open class GliderScreen {
     protected var payload: JSONObject? = JSONObject()
 
     /**
-     * Method to create the payload for a request
+     * Method to mainScreen the payload for a request
      *
      * @param operation the operation to perform
      * @param params dynamic params list to attach to the [payload]

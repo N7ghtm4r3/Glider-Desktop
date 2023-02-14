@@ -1,12 +1,13 @@
 package layouts.navigation
 
 import Routes.connect
-import Routes.create
+import Routes.mainScreen
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -20,7 +21,6 @@ import helpers.appName
 import helpers.backgroundColor
 import helpers.primaryColor
 import kotlinx.coroutines.delay
-import layouts.components.GliderText
 import moe.tlaster.precompose.navigation.Navigator
 
 /**
@@ -31,9 +31,9 @@ import moe.tlaster.precompose.navigation.Navigator
 class SplashScreen {
 
     /**
-     * Method to create the [SplashScreen] view
+     * Method to mainScreen the [SplashScreen] view
+     *
      * @param navigator useful to navigate in the app
-     * @param modifier modifier for the layout
      */
     @Composable
     @Preview
@@ -46,8 +46,8 @@ class SplashScreen {
                 animationSpec = tween(durationMillis = 1000)
             )
             delay(500)
-            if (user.token != null)
-                navigator.navigate(create.name)
+            if (user.token == null)
+                navigator.navigate(mainScreen.name)
             else
                 navigator.navigate(connect.name)
         })
@@ -55,18 +55,19 @@ class SplashScreen {
             contentAlignment = Alignment.Center,
             modifier = Modifier.background(primaryColor).fillMaxSize()
         ) {
-            GliderText(
+            Text(
                 text = appName,
-                textColor = backgroundColor.copy(blink.value),
-                size = 75.sp
+                color = backgroundColor.copy(blink.value),
+                fontSize = 75.sp
             )
             Row(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
-                GliderText(
+                Text(
                     text = "by Tecknobit",
+                    color = backgroundColor,
                     modifier = Modifier.padding(25.dp)
                 )
             }
