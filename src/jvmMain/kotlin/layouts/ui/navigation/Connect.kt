@@ -1,7 +1,6 @@
-package layouts.navigation
+package layouts.ui.navigation
 
 import Routes.mainScreen
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -31,7 +30,6 @@ import helpers.*
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.GliderButton
 import layouts.components.GliderTextField
-import layouts.parents.RequestManager
 import moe.tlaster.precompose.navigation.Navigator
 import java.awt.Desktop
 import java.net.URI
@@ -60,12 +58,11 @@ class Connect : RequestManager() {
     private lateinit var scope: CoroutineScope
 
     /**
-     * Method to mainScreen the [Connect] view
+     * Method to create the [Connect] view
      * @param navigator useful to navigate in the app
      * @param modifier modifier for the layout
      */
     @Composable
-    @Preview
     fun connect(navigator: Navigator, modifier: Modifier = Modifier) {
         errorTriggered = remember { mutableStateListOf(false, false, false) }
         scaffoldState = rememberScaffoldState()

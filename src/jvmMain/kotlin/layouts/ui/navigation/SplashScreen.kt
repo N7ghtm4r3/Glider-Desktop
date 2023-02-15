@@ -1,4 +1,4 @@
-package layouts.navigation
+package layouts.ui.navigation
 
 import Routes.connect
 import Routes.mainScreen

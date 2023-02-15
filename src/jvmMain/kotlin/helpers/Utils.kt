@@ -28,6 +28,11 @@ val backgroundColor: Color = fromHexToColor(BACKGROUND_COLOR_HEX)
 val redColor: Color = fromHexToColor(COLOR_RED_HEX)
 
 /**
+ * the green color value
+ */
+val greenColor: Color = fromHexToColor("#36ba59")
+
+/**
  * the red color value
  */
 val cBackgroundColor: Color = fromHexToColor("#1b1ba6")

@@ -1,4 +1,4 @@
-package layouts.parents
+package helpers
 
 import com.tecknobit.glider.helpers.GliderLauncher
 import com.tecknobit.glider.records.Device.DeviceKeys

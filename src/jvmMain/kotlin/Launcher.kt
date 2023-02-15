@@ -13,9 +13,9 @@ import helpers.appName
 import helpers.backgroundColor
 import helpers.primaryColor
 import helpers.redColor
-import layouts.navigation.Connect
-import layouts.navigation.SplashScreen
-import layouts.ui.MainScreen
+import layouts.ui.Main
+import layouts.ui.navigation.Connect
+import layouts.ui.navigation.SplashScreen
 import moe.tlaster.precompose.PreComposeWindow
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
@@ -91,7 +91,7 @@ fun App() {
                 route = mainScreen.name,
                 navTransition = NavTransition(),
             ) {
-                MainScreen().createMainScreen()
+                Main().createMainView()
             }
         }
     }
