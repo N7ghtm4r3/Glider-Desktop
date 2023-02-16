@@ -32,6 +32,7 @@ class Sidebar {
                 Pair("Create", Default.Add), Pair("Insert", Default.Create),
                 Pair("Sessions", Default.ManageAccounts), Pair("Devices", Default.Devices)
             )
+            Divider(thickness = 1.dp, color = Color.White)
             menuItems.forEach { item ->
                 menuItem({}, item)
             }

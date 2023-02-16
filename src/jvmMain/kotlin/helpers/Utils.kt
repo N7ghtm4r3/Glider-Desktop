@@ -30,7 +30,7 @@ val redColor: Color = fromHexToColor(COLOR_RED_HEX)
 /**
  * the green color value
  */
-val greenColor: Color = fromHexToColor("#36ba59")
+val greenColor: Color = fromHexToColor("#128c33")
 
 /**
  * the red color value

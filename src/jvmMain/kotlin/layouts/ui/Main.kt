@@ -5,13 +5,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import helpers.RequestManager
 import helpers.backgroundColor
 import helpers.primaryColor
 import layouts.components.ListSection
+import layouts.components.PasswordTab
 import layouts.components.Sidebar
 
 /**
@@ -27,6 +28,7 @@ class Main : RequestManager() {
      */
     @Composable
     fun createMainView() {
+        val listSection: ListSection = remember { ListSection() }
         Scaffold(topBar = { TopAppBar(title = {}) }) {
             Box(
                 Modifier.fillMaxSize()
@@ -40,12 +42,12 @@ class Main : RequestManager() {
                     Column(
                         modifier = Modifier.weight(1f).fillMaxHeight().background(backgroundColor)
                     ) {
-                        ListSection().listSection()
+                        listSection.listSection()
                     }
                     Column(
-                        modifier = Modifier.weight(1f).fillMaxHeight().background(Color.Black)
+                        modifier = Modifier.weight(1f).fillMaxHeight().background(primaryColor)
                     ) {
-
+                        PasswordTab().createTab(listSection.selectedPassword())
                     }
                 }
             }

@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons.Default
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.StickyNote2
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +24,6 @@ import com.tecknobit.glider.records.Password.Status.ACTIVE
 import com.tecknobit.glider.records.Password.Status.DELETED
 import helpers.backgroundColor
 import helpers.greenColor
-import helpers.primaryColor
 import helpers.redColor
 
 /**
@@ -53,13 +49,18 @@ class ListSection {
     private lateinit var querySearch: MutableState<String>
 
     /**
+     * **selectedPassword** -> the selected password
+     */
+    private lateinit var selectedPassword: MutableState<Password>
+
+    /**
      * Method to create the [ListSection] view. No-any params required
      */
     @Composable
     fun listSection() {
         lSelected = remember { mutableStateOf(true) }
         rSelected = remember { mutableStateOf(false) }
-        querySearch = rememberSaveable { mutableStateOf("") }
+        querySearch = remember { mutableStateOf("") }
         Column(
             modifier = Modifier.fillMaxSize().padding(top = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -103,7 +104,7 @@ class ListSection {
                             }
                         ) {
                             Icon(
-                                imageVector = Default.StickyNote2,
+                                imageVector = Default.ViewList,
                                 contentDescription = null,
                                 tint = if (!lSelected.value) greenColor else Color.White
                             )
@@ -132,7 +133,6 @@ class ListSection {
                     }
                 }
             }
-            Divider(Modifier.padding(top = 26.dp), thickness = 1.5.dp, color = primaryColor)
             loadPasswordsList()
         }
     }
@@ -144,7 +144,7 @@ class ListSection {
     private fun loadPasswordsList() {
         // TODO: TO USE THE CORRECT LIST OF PASSWORDS TO FILTER
         val dPasswords = listOf(
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gag41414142141414141414142141424", ACTIVE),
             Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
             Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
             Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
@@ -167,10 +167,17 @@ class ListSection {
             Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
             Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
             Password(null, "tat", ArrayList<String>(listOf("List", "Netflix")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List1", "Youtube", "Netflix")), "gaga", DELETED)
+            Password(
+                null,
+                "tat1",
+                ArrayList<String>(listOf("List1", "Youtube", "Netflix", "Gagag", "gagfaga")),
+                "gaga",
+                DELETED
+            )
         )
         val passwords = filterPasswords(dPasswords)
         val listState = rememberLazyListState()
+        selectedPassword = rememberSaveable { mutableStateOf(passwords[0]) }
         Spacer(Modifier.height(16.dp))
         LazyColumn(
             modifier = Modifier.height(1000.dp),
@@ -180,10 +187,12 @@ class ListSection {
         ) {
             items(passwords) { password ->
                 Card(
-                    modifier = Modifier.fillMaxWidth().height(65.dp),
+                    modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
+                        selectedPassword.value = password
+                    },
                     backgroundColor = Color.White,
                     shape = RoundedCornerShape(10.dp),
-                    elevation = 10.dp
+                    elevation = 5.dp
                 ) {
                     Row {
                         Column(
@@ -261,6 +270,10 @@ class ListSection {
             }
         }
         return passwords
+    }
+
+    fun selectedPassword(): Password {
+        return selectedPassword.value
     }
 
 }
