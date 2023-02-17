@@ -5,6 +5,7 @@ import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.Font
@@ -18,8 +19,11 @@ import layouts.ui.navigation.Connect
 import layouts.ui.navigation.SplashScreen
 import moe.tlaster.precompose.PreComposeWindow
 import moe.tlaster.precompose.navigation.NavHost
+import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
+
+lateinit var navigator: Navigator
 
 /**
  * List of available routes of the app
@@ -51,6 +55,7 @@ enum class Routes {
 @Composable
 @Preview
 fun App() {
+    navigator = rememberNavigator()
     MaterialTheme(
         typography = Typography(defaultFontFamily = FontFamily(Font(resource = "baloo.ttf"))),
         colors = Colors(
@@ -59,7 +64,7 @@ fun App() {
             secondary = backgroundColor,
             secondaryVariant = primaryColor,
             background = backgroundColor,
-            surface = primaryColor,
+            surface = Transparent,
             error = redColor,
             onPrimary = backgroundColor,
             onSecondary = primaryColor,
@@ -69,7 +74,6 @@ fun App() {
             isLight = true
         )
     ) {
-        val navigator = rememberNavigator()
         NavHost(
             navigator = navigator,
             navTransition = NavTransition(),
@@ -79,13 +83,13 @@ fun App() {
                 route = splashScreen.name,
                 navTransition = NavTransition(),
             ) {
-                SplashScreen().showSplashScreen(navigator)
+                SplashScreen().showSplashScreen()
             }
             scene(
                 route = connect.name,
                 navTransition = NavTransition(),
             ) {
-                Connect().connect(navigator)
+                Connect().connect()
             }
             scene(
                 route = mainScreen.name,

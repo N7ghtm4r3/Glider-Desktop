@@ -4,7 +4,7 @@ import com.tecknobit.glider.helpers.GliderLauncher
 import com.tecknobit.glider.records.Device.DeviceKeys
 import com.tecknobit.glider.records.Device.Type.DESKTOP
 import com.tecknobit.glider.records.Session.SessionKeys
-import helpers.User.user
+import helpers.User.Companion.user
 import org.json.JSONObject
 import java.net.InetAddress
 
@@ -27,7 +27,7 @@ open class RequestManager {
     protected var payload: JSONObject? = JSONObject()
 
     /**
-     * Method to mainScreen the payload for a request
+     * Method to create the payload for a request
      *
      * @param operation the operation to perform
      * @param params dynamic params list to attach to the [payload]

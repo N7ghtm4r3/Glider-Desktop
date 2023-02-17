@@ -1,4 +1,4 @@
-package layouts.components
+package layouts.components.sections
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -198,7 +198,7 @@ class PasswordTab : RequestManager() {
                             }
                         }
                         LazyVerticalGrid(
-                            modifier = Modifier.padding(start = 45.dp, top = 10.dp),
+                            modifier = Modifier.padding(start = 20.dp, top = 10.dp),
                             columns = GridCells.Adaptive(140.dp),
                             contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -219,7 +219,10 @@ class PasswordTab : RequestManager() {
                                 ) {
                                     Row {
                                         Column(Modifier.weight(1f).fillMaxHeight().padding(start = 5.dp)) {
-                                            Text(scope)
+                                            Text(
+                                                text = scope,
+                                                maxLines = 1
+                                            )
                                         }
                                         if (passwordStatus == ACTIVE) {
                                             Column(
@@ -241,7 +244,7 @@ class PasswordTab : RequestManager() {
                                 }
                             }
                         }
-                        Divider(thickness = 1.dp, color = White)
+                        Divider(Modifier.padding(top = 30.dp), thickness = 1.dp, color = White)
                     }
                 }
             }

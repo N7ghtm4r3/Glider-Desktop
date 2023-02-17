@@ -15,13 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import helpers.User
-import helpers.User.user
+import helpers.User.Companion.user
 import helpers.appName
 import helpers.backgroundColor
 import helpers.primaryColor
 import kotlinx.coroutines.delay
-import moe.tlaster.precompose.navigation.Navigator
+import navigator
 
 /**
  * This is the layout for the splashscreen
@@ -31,14 +30,11 @@ import moe.tlaster.precompose.navigation.Navigator
 class SplashScreen {
 
     /**
-     * Method to mainScreen the [SplashScreen] view
-     *
-     * @param navigator useful to navigate in the app
+     * Method to mainScreen the [SplashScreen] view. No-any params required
      */
     @Composable
     @Preview
-    fun showSplashScreen(navigator: Navigator, modifier: Modifier = Modifier) {
-        User().also { user = it }
+    fun showSplashScreen(modifier: Modifier = Modifier) {
         val blink = remember { Animatable(0f) }
         LaunchedEffect(key1 = true, block = {
             blink.animateTo(
@@ -46,6 +42,7 @@ class SplashScreen {
                 animationSpec = tween(durationMillis = 1000)
             )
             delay(500)
+            // TODO: RIGHT NAVIGATION WORKFLOW !=
             if (user.token == null)
                 navigator.navigate(mainScreen.name)
             else

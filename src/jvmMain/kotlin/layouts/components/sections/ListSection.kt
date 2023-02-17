@@ -1,4 +1,4 @@
-package layouts.components
+package layouts.components.sections
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +24,7 @@ import com.tecknobit.glider.records.Password.Status.DELETED
 import helpers.backgroundColor
 import helpers.greenColor
 import helpers.redColor
+import layouts.components.GliderTextField
 
 /**
  * This is the layout for the list section where there is the list of the passwords
@@ -74,9 +74,6 @@ class ListSection {
                         querySearch.value = it
                     },
                     leadingIcon = Default.Search,
-                    leadingOnClick = {
-
-                    },
                     trailingIcon = Default.Clear,
                     trailingOnClick = {
                         querySearch.value = ""
@@ -173,11 +170,18 @@ class ListSection {
                 ArrayList<String>(listOf("List1", "Youtube", "Netflix", "Gagag", "gagfaga")),
                 "gaga",
                 DELETED
+            ),
+            Password(
+                null,
+                "tat1",
+                ArrayList<String>(listOf("List1", "Youtube", "Netflix", "Gagag", "gagfaga")),
+                "gaga",
+                ACTIVE
             )
         )
         val passwords = filterPasswords(dPasswords)
         val listState = rememberLazyListState()
-        selectedPassword = rememberSaveable { mutableStateOf(passwords[0]) }
+        selectedPassword = remember { mutableStateOf(passwords[0]) }
         Spacer(Modifier.height(16.dp))
         LazyColumn(
             modifier = Modifier.height(1000.dp),
@@ -201,7 +205,7 @@ class ListSection {
                         ) {
                             Text(
                                 modifier = Modifier.padding(start = 10.dp),
-                                text = "tail",
+                                text = password.tail,
                                 fontSize = 20.sp
                             )
                         }
@@ -272,6 +276,10 @@ class ListSection {
         return passwords
     }
 
+    /**
+     * Method to get the selected password from the list. No-any params required
+     * @return the selected password as [Password]
+     */
     fun selectedPassword(): Password {
         return selectedPassword.value
     }

@@ -41,9 +41,9 @@ fun GliderTextField(
     value: String,
     onChange: (String) -> Unit,
     leadingIcon: ImageVector,
-    leadingOnClick: (() -> Unit),
+    leadingOnClick: (() -> Unit) = {},
     trailingIcon: ImageVector,
-    trailingOnClick: () -> Unit,
+    trailingOnClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(

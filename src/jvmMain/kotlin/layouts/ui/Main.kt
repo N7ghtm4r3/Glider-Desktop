@@ -5,15 +5,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import helpers.RequestManager
-import helpers.backgroundColor
-import helpers.primaryColor
-import layouts.components.ListSection
-import layouts.components.PasswordTab
-import layouts.components.Sidebar
+import helpers.*
+import layouts.components.sections.ListSection
+import layouts.components.sections.PasswordTab
+import layouts.components.sections.Sidebar
 
 /**
  * This is the layout for the main screen of the application
@@ -28,11 +28,17 @@ class Main : RequestManager() {
      */
     @Composable
     fun createMainView() {
+        showAlert = rememberSaveable { mutableStateOf(false) }
+        showPopup = rememberSaveable { mutableStateOf(false) }
         val listSection: ListSection = remember { ListSection() }
         Scaffold(topBar = { TopAppBar(title = {}) }) {
             Box(
                 Modifier.fillMaxSize()
             ) {
+                if (showAlert.value)
+                    createAlert()
+                if (showPopup.value)
+                    createPopup()
                 Row {
                     Column(
                         modifier = Modifier.width(200.dp).fillMaxHeight().background(primaryColor)
