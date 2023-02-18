@@ -103,108 +103,113 @@ class PasswordsList : List() {
             modifier = Modifier.fillMaxSize().padding(top = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column {
-                GliderTextField(
-                    modifier = Modifier.height(60.dp),
-                    text = "Filter by tail or scopes",
-                    value = querySearch.value,
-                    onChange = {
-                        querySearch.value = it
-                    },
-                    leadingIcon = Default.Search,
-                    trailingIcon = Default.Clear,
-                    trailingOnClick = {
-                        querySearch.value = ""
-                    }
-                )
-            }
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 25.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Row {
-                        OutlinedButton(
-                            shape = RoundedCornerShape(100.dp),
-                            border = BorderStroke(2.dp, greenColor),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (lSelected.value) greenColor else Color.Transparent
-                            ),
-                            onClick = {
-                                if (!lSelected.value)
-                                    lSelected.value = true
-                                rSelected.value = false
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Default.ViewList,
-                                contentDescription = null,
-                                tint = if (!lSelected.value) greenColor else Color.White
-                            )
-                        }
-                    }
-                    Spacer(Modifier.width(25.dp))
-                    Row {
-                        OutlinedButton(
-                            shape = RoundedCornerShape(100.dp),
-                            border = BorderStroke(2.dp, redColor),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (rSelected.value) redColor else Color.Transparent
-                            ),
-                            onClick = {
-                                if (!rSelected.value)
-                                    rSelected.value = true
-                                lSelected.value = false
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Default.Delete,
-                                contentDescription = null,
-                                tint = if (!rSelected.value) redColor else Color.White
-                            )
-                        }
-                    }
-                }
-            }
-            loadList {
-                val passwords = filterPasswords(itemsList as MutableList<Password>)
-                items(passwords) { password ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
-                            selectedItem.value = password
+            if (itemsList.size > 0) {
+                Column {
+                    GliderTextField(
+                        modifier = Modifier.height(60.dp),
+                        text = "Filter by tail or scopes",
+                        value = querySearch.value,
+                        onChange = {
+                            querySearch.value = it
                         },
-                        backgroundColor = Color.White,
-                        shape = RoundedCornerShape(10.dp),
-                        elevation = 5.dp
+                        leadingIcon = Default.Search,
+                        trailingIcon = Default.Clear,
+                        trailingOnClick = {
+                            querySearch.value = ""
+                        }
+                    )
+                }
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top = 25.dp),
+                        horizontalArrangement = Arrangement.Center
                     ) {
                         Row {
-                            Column(
-                                modifier = Modifier.weight(1f).fillMaxHeight(),
-                                verticalArrangement = Arrangement.Center
+                            OutlinedButton(
+                                shape = RoundedCornerShape(100.dp),
+                                border = BorderStroke(2.dp, greenColor),
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = if (lSelected.value) greenColor else Color.Transparent
+                                ),
+                                onClick = {
+                                    if (!lSelected.value)
+                                        lSelected.value = true
+                                    rSelected.value = false
+                                }
                             ) {
-                                Text(
-                                    modifier = Modifier.padding(start = 10.dp),
-                                    text = password.tail,
-                                    color = primaryColor,
-                                    fontSize = 20.sp
+                                Icon(
+                                    imageVector = Default.ViewList,
+                                    contentDescription = null,
+                                    tint = if (!lSelected.value) greenColor else Color.White
                                 )
                             }
-                            Column(
-                                modifier = Modifier.weight(1f).fillMaxHeight(),
-                                horizontalAlignment = Alignment.End,
-                                verticalArrangement = Arrangement.Center
+                        }
+                        Spacer(Modifier.width(25.dp))
+                        Row {
+                            OutlinedButton(
+                                shape = RoundedCornerShape(100.dp),
+                                border = BorderStroke(2.dp, redColor),
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = if (rSelected.value) redColor else Color.Transparent
+                                ),
+                                onClick = {
+                                    if (!rSelected.value)
+                                        rSelected.value = true
+                                    lSelected.value = false
+                                }
                             ) {
-                                Box(
-                                    modifier = Modifier.background(if (password.status == ACTIVE) greenColor else redColor)
-                                        .fillMaxHeight().width(100.dp)
+                                Icon(
+                                    imageVector = Default.Delete,
+                                    contentDescription = null,
+                                    tint = if (!rSelected.value) redColor else Color.White
                                 )
                             }
                         }
                     }
                 }
             }
+            if (itemsList.size > 0) {
+                loadList {
+                    val passwords = filterPasswords(itemsList as MutableList<Password>)
+                    items(passwords) { password ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
+                                selectedItem.value = password
+                            },
+                            backgroundColor = Color.White,
+                            shape = RoundedCornerShape(10.dp),
+                            elevation = 5.dp
+                        ) {
+                            Row {
+                                Column(
+                                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        modifier = Modifier.padding(start = 10.dp),
+                                        text = password.tail,
+                                        color = primaryColor,
+                                        fontSize = 20.sp
+                                    )
+                                }
+                                Column(
+                                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                                    horizontalAlignment = Alignment.End,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier.background(if (password.status == ACTIVE) greenColor else redColor)
+                                            .fillMaxHeight().width(100.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            } else
+                selectedItem = remember { mutableStateOf(null) }
         }
     }
 

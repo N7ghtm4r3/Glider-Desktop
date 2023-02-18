@@ -11,8 +11,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.Computer
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,17 +24,26 @@ import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.formatters.TimeFormatter.getStringDate
 import com.tecknobit.glider.records.Device
 import com.tecknobit.glider.records.Device.Type.DESKTOP
-import com.tecknobit.glider.records.Session
+import helpers.User.Companion.user
 import helpers.backgroundColor
 import helpers.primaryColor
 import helpers.redColor
 import java.lang.System.currentTimeMillis
 import java.net.InetAddress
 
+/**
+ * This is the layout for the list section where there is the list of the devices connected to the session
+ *
+ * @author Tecknobit - N7ghtm4r3
+ * @see List
+ * **/
 class DevicesList : List() {
 
+    /**
+     * Method to create the [DevicesList] view. No-any params required
+     */
     @Composable
-    fun showDevices(session: Session) {
+    fun showDevices() {
         // TODO: USE THE CORRECT LIST
         itemsList = mutableListOf(
             Device(
@@ -131,18 +143,18 @@ class DevicesList : List() {
             ) {
                 Column {
                     createCardHeader("Server details")
-                    createCardItem(Modifier.padding(start = 25.dp, top = 10.dp), "Address", session.hostAddress)
-                    createCardItem(key = "Port", value = session.hostPort)
+                    createCardItem(Modifier.padding(start = 25.dp, top = 10.dp), "Address", user.hostAddress)
+                    createCardItem(key = "Port", value = user.hostPort)
                     createCardHeader("Security")
-                    createCardItem(Modifier.padding(start = 25.dp, top = 10.dp), "Single use", session.isSingleUseMode)
-                    createCardItem(key = "QR Code login", value = session.isQRCodeLoginEnabled)
+                    createCardItem(Modifier.padding(start = 25.dp, top = 10.dp), "Single use", user.isSingleUseMode)
+                    createCardItem(key = "QR Code login", value = user.isQRCodeLoginEnabled)
                     createCardItem(
                         Modifier.padding(start = 25.dp, bottom = 15.dp), key = "Only in localhost",
-                        value = session.runInLocalhost()
+                        value = user.runInLocalhost()
                     )
                 }
             }
-            if (!session.isSingleUseMode) {
+            if (!user.isSingleUseMode) {
                 loadList {
                     items(itemsList) { device ->
                         device as Device
@@ -186,10 +198,15 @@ class DevicesList : List() {
                         }
                     }
                 }
-            }
+            } else
+                selectedItem = remember { mutableStateOf(null) }
         }
     }
 
+    /**
+     * Method to create a card header
+     * @param header: header value to create
+     * */
     @Composable
     private fun createCardHeader(header: String) {
         Row(
@@ -204,6 +221,13 @@ class DevicesList : List() {
         Divider(Modifier.padding(top = 5.dp, end = 20.dp), color = backgroundColor, thickness = 2.dp)
     }
 
+    /**
+     * Method to create a card item
+     *
+     * @param modifier: modifier of the layout for the card item
+     * @param key: key of the card item to create
+     * @param value: value of the card item to create
+     * */
     @Composable
     private fun createCardItem(modifier: Modifier = Modifier.padding(start = 25.dp), key: String, value: Any) {
         Row(

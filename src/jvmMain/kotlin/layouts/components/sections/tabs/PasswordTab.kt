@@ -8,20 +8,21 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons.Default
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.glider.records.Password
 import com.tecknobit.glider.records.Password.Status
-import com.tecknobit.glider.records.Password.Status.ACTIVE
-import helpers.*
+import helpers.RequestManager
+import helpers.primaryColor
+import helpers.redColor
+import helpers.showSnack
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.StringSelection
@@ -31,13 +32,9 @@ import java.awt.datatransfer.StringSelection
  *
  * @author Tecknobit - N7ghtm4r3
  * @see RequestManager
+ * @see Tab
  * **/
-class PasswordTab : RequestManager() {
-
-    /**
-     * **scaffoldState** -> the scaffold state for the scaffold of the page
-     */
-    private lateinit var scaffoldState: ScaffoldState
+class PasswordTab : Tab() {
 
     /**
      * **hidePassword** -> whether the [Password] is hidden
@@ -54,32 +51,16 @@ class PasswordTab : RequestManager() {
      * @param password: the password to manage and to create the tab
      */
     @Composable
-    fun createTab(password: Password) {
-        val coroutineScope = rememberCoroutineScope()
-        scaffoldState = rememberScaffoldState()
-        passwordStatus = password.status
-        Scaffold(
-            scaffoldState = scaffoldState,
-            backgroundColor = primaryColor,
-            contentColor = primaryColor,
-            snackbarHost = {
-                SnackbarHost(it) { data ->
-                    Snackbar(
-                        backgroundColor = backgroundColor,
-                        contentColor = primaryColor,
-                        snackbarData = data
-                    )
-                }
-            }
-        ) {
-            Divider(thickness = 1.dp, color = White)
-            Column(modifier = Modifier.fillMaxSize().padding(top = 30.dp)) {
+    fun createPasswordTab(password: Password?) {
+        if (password != null) {
+            passwordStatus = password.status
+            createTab {
                 Row {
                     Column(Modifier.padding(start = 35.dp, top = 10.dp)) {
                         Row {
                             Text(
                                 text = password.tail,
-                                color = White,
+                                color = Color.White,
                                 fontSize = 45.sp
                             )
                         }
@@ -105,17 +86,16 @@ class PasswordTab : RequestManager() {
                                 }
                             ) {
                                 Icon(
-                                    imageVector = Default.Delete,
+                                    imageVector = Icons.Default.Delete,
                                     contentDescription = null,
-                                    tint = White
+                                    tint = Color.White
                                 )
                             }
                             Spacer(Modifier.width(20.dp))
                             OutlinedButton(
                                 shape = RoundedCornerShape(100.dp),
-                                border = BorderStroke(2.dp, if (passwordStatus == ACTIVE) White else greenColor),
                                 colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (passwordStatus == ACTIVE) White else greenColor
+                                    backgroundColor = Color.White
                                 ),
                                 onClick = {
                                     if (passwordStatus == Status.DELETED) {
@@ -129,21 +109,21 @@ class PasswordTab : RequestManager() {
                                 }
                             ) {
                                 Icon(
-                                    imageVector = if (passwordStatus == ACTIVE) Default.ContentCopy else Default.Restore,
+                                    imageVector = if (passwordStatus == Status.ACTIVE) Icons.Default.ContentCopy else Icons.Default.Restore,
                                     contentDescription = null,
-                                    tint = if (passwordStatus == ACTIVE) primaryColor else White
+                                    tint = primaryColor
                                 )
                             }
                         }
                     }
                 }
-                Divider(Modifier.padding(top = 30.dp), thickness = 1.dp, color = White)
+                Divider(Modifier.padding(top = 30.dp), thickness = 1.dp, color = Color.White)
                 Row {
                     Column {
                         Text(
                             modifier = Modifier.padding(start = 35.dp, top = 10.dp),
                             text = "Password",
-                            color = White,
+                            color = Color.White,
                             fontSize = 30.sp
                         )
                         Row(Modifier.fillMaxWidth()) {
@@ -153,14 +133,14 @@ class PasswordTab : RequestManager() {
                                 Text(
                                     modifier = Modifier.padding(start = 45.dp, top = 10.dp),
                                     text = if (!hidePassword.value) password.password else hidePassword(password),
-                                    color = White,
+                                    color = Color.White,
                                     fontSize = 20.sp
                                 )
                             }
                         }
                     }
                 }
-                Divider(Modifier.padding(top = 30.dp), thickness = 1.dp, color = White)
+                Divider(Modifier.padding(top = 30.dp), thickness = 1.dp, color = Color.White)
                 Row {
                     Column {
                         Row(
@@ -170,18 +150,18 @@ class PasswordTab : RequestManager() {
                             Row {
                                 Text(
                                     text = "Scopes",
-                                    color = White,
+                                    color = Color.White,
                                     fontSize = 30.sp
                                 )
                             }
-                            if (passwordStatus == ACTIVE) {
+                            if (passwordStatus == Status.ACTIVE) {
                                 Spacer(Modifier.width(10.dp))
                                 Row {
                                     OutlinedButton(
                                         shape = RoundedCornerShape(100),
-                                        border = BorderStroke(2.dp, White),
+                                        border = BorderStroke(2.dp, Color.White),
                                         colors = ButtonDefaults.buttonColors(
-                                            backgroundColor = White
+                                            backgroundColor = Color.White
                                         ),
                                         onClick = {
                                             // TODO: REQUEST THEN
@@ -189,7 +169,7 @@ class PasswordTab : RequestManager() {
                                         }
                                     ) {
                                         Icon(
-                                            imageVector = Default.Add,
+                                            imageVector = Icons.Default.Add,
                                             contentDescription = null,
                                             tint = primaryColor
                                         )
@@ -207,13 +187,13 @@ class PasswordTab : RequestManager() {
                             items(password.scopesSorted.toList()) { scope ->
                                 TextButton(
                                     onClick = {
-                                        if (passwordStatus == ACTIVE) {
+                                        if (passwordStatus == Status.ACTIVE) {
                                             // TODO: REQUEST THEN
                                             showSnack(coroutineScope, scaffoldState, "Scope edited")
                                         }
                                     },
                                     colors = ButtonDefaults.buttonColors(
-                                        backgroundColor = White
+                                        backgroundColor = Color.White
                                     ),
                                     shape = RoundedCornerShape(100)
                                 ) {
@@ -224,7 +204,7 @@ class PasswordTab : RequestManager() {
                                                 maxLines = 1
                                             )
                                         }
-                                        if (passwordStatus == ACTIVE) {
+                                        if (passwordStatus == Status.ACTIVE) {
                                             Column(
                                                 modifier = Modifier.weight(1f).fillMaxHeight(),
                                                 horizontalAlignment = Alignment.End,
@@ -235,7 +215,7 @@ class PasswordTab : RequestManager() {
                                                         // TODO: REQUEST THEN
                                                         showSnack(coroutineScope, scaffoldState, "Scope deleted")
                                                     },
-                                                    imageVector = Default.Clear,
+                                                    imageVector = Icons.Default.Clear,
                                                     contentDescription = null
                                                 )
                                             }
@@ -244,11 +224,12 @@ class PasswordTab : RequestManager() {
                                 }
                             }
                         }
-                        Divider(Modifier.padding(top = 30.dp), thickness = 1.dp, color = White)
+                        Divider(Modifier.padding(top = 30.dp), thickness = 1.dp, color = Color.White)
                     }
                 }
             }
-        }
+        } else
+            showEmptyListLayout("No-any passwords available")
     }
 
     /**

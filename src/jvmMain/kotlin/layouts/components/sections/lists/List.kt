@@ -19,14 +19,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import helpers.backgroundColor
 
+/**
+ * **List** is the super class where all the views inheriting are enabled to contain a list of items
+ *
+ * @author Tecknobit - N7ghtm4r3
+ * **/
 abstract class List {
 
+    /**
+     * **itemsList** -> items list to create the view
+     */
     protected lateinit var itemsList: MutableList<Any>
-    protected lateinit var selectedItem: MutableState<Any>
 
+    /**
+     * **selectedItem** -> the selected item to work on
+     */
+    protected lateinit var selectedItem: MutableState<Any?>
+
+    /**
+     * Method to load the [itemsList]
+     *
+     * @param content: the layout content to set for the list
+     */
     @Composable
     protected fun loadList(content: LazyListScope.() -> Unit) {
-        selectedItem = remember { mutableStateOf(itemsList[0]) }
+        selectedItem =
+            if (itemsList.size > 0)
+                remember { mutableStateOf(itemsList[0]) }
+            else
+                remember { mutableStateOf(null) }
         val listState = rememberLazyListState()
         Spacer(Modifier.height(16.dp))
         LazyColumn(
@@ -52,6 +73,11 @@ abstract class List {
         )
     }
 
+    /**
+     * Method to get the [selectedItem]. No-any params required
+     *
+     * @return the selected item as [T]
+     */
     fun <T> selectedItem(): T {
         return selectedItem.value as T
     }

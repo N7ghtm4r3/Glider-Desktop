@@ -11,11 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.tecknobit.glider.records.Session
 import helpers.*
 import layouts.components.sections.Sidebar
 import layouts.components.sections.lists.DevicesList
 import layouts.components.sections.lists.PasswordsList
+import layouts.components.sections.tabs.DeviceTab
 import layouts.components.sections.tabs.PasswordTab
 
 /**
@@ -28,6 +28,9 @@ class Main : RequestManager() {
 
     companion object {
 
+        /**
+         * **showDevices** -> whether show the [PasswordsList] layout or the [DevicesList] layout
+         */
         lateinit var showDevices: MutableState<Boolean>
 
     }
@@ -43,7 +46,7 @@ class Main : RequestManager() {
         val passwordsList: PasswordsList = remember { PasswordsList() }
         val passwordTab: PasswordTab = remember { PasswordTab() }
         val devicesList: DevicesList = remember { DevicesList() }
-        //val devicesList: DevicesList = remember { DevicesList() }
+        val deviceTab: DeviceTab = remember { DeviceTab() }
         Scaffold(topBar = { TopAppBar(title = {}) }) {
             Box(
                 Modifier.fillMaxSize()
@@ -63,27 +66,16 @@ class Main : RequestManager() {
                     ) {
                         if (!showDevices.value)
                             passwordsList.showPasswords()
-                        else {
-                            // TODO: PASS THE CORRECT SESSION INSTANCE
-                            devicesList.showDevices(
-                                Session(
-                                    "gagagv34y293u646u260t921ìut",
-                                    "gaio2vnìvjodaegvqg?=",
-                                    "gase'+qj2w3e409yhj0ì'9h+gyt32gei+nNB+GHQEBW+G==",
-                                    "GAGVAGAWGA",
-                                    "LOCALHOST",
-                                    22,
-                                    false,
-                                    false,
-                                    false
-                                )
-                            )
-                        }
+                        else
+                            devicesList.showDevices()
                     }
                     Column(
                         modifier = Modifier.weight(1f).fillMaxHeight().background(primaryColor)
                     ) {
-                        passwordTab.createTab(passwordsList.selectedItem())
+                        if (!showDevices.value)
+                            passwordTab.createPasswordTab(passwordsList.selectedItem())
+                        else
+                            deviceTab.createDeviceTab(devicesList.selectedItem())
                     }
                 }
             }
