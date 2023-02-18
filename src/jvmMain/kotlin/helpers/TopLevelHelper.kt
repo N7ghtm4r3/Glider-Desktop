@@ -8,9 +8,10 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * `showAlert` whether show the alert
@@ -31,6 +32,16 @@ lateinit var showPopup: MutableState<Boolean>
  * `popupContent` content of the popup to show
  */
 lateinit var popupContent: @Composable BoxScope.() -> Unit
+
+/**
+ * **scaffoldState** -> the scaffold state for the scaffold of the page
+ */
+private lateinit var scaffoldState: ScaffoldState
+
+/**
+ * **coroutineScope** -> the coroutine scope to manage the coroutines of the [scaffoldState]
+ */
+private lateinit var coroutineScope: CoroutineScope
 
 /**
  * Method to fill the content for the alert
@@ -77,7 +88,7 @@ fun createAlert() {
     AlertDialog(
         modifier = alertContent.modifier,
         shape = RoundedCornerShape(15.dp),
-        backgroundColor = Color.White,
+        backgroundColor = White,
         onDismissRequest = alertContent.dismissRequest,
         title = {
             Text(
@@ -131,6 +142,7 @@ fun dismissPopup() {
  */
 @Composable
 fun createPopup() {
+    scaffoldState = rememberScaffoldState()
     Popup(
         alignment = Alignment.Center,
         focusable = true
@@ -138,29 +150,52 @@ fun createPopup() {
         Card(
             Modifier.width(400.dp).height(400.dp),
             shape = RoundedCornerShape(15.dp),
-            backgroundColor = Color.White,
             elevation = 10.dp
         ) {
-            Box {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    IconButton(
-                        modifier = Modifier.padding(end = 5.dp),
-                        onClick = { showPopup.value = false }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Clear,
-                            contentDescription = null,
-                            tint = primaryColor
+            Scaffold(
+                scaffoldState = scaffoldState,
+                backgroundColor = White,
+                contentColor = primaryColor,
+                snackbarHost = {
+                    SnackbarHost(it) { data ->
+                        Snackbar(
+                            backgroundColor = backgroundColor,
+                            contentColor = primaryColor,
+                            snackbarData = data
                         )
                     }
                 }
-                Box(content = popupContent)
+            ) {
+                Box {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        IconButton(
+                            modifier = Modifier.padding(end = 5.dp),
+                            onClick = { showPopup.value = false }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = null,
+                                tint = primaryColor
+                            )
+                        }
+                    }
+                    Box(content = popupContent)
+                }
             }
         }
     }
+}
+
+/**
+ * Method to show a snackbar from a popup
+ *
+ * @param message: message to show
+ * */
+fun showPopupSnack(message: String) {
+    showSnack(coroutineScope, scaffoldState, message)
 }
 
 /**

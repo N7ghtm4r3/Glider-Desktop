@@ -20,6 +20,8 @@ import helpers.User.Companion.user
 import helpers.fillAlertContent
 import helpers.showAlert
 import layouts.components.forms.CreateForm
+import layouts.components.forms.InsertForm
+import layouts.ui.Main.Companion.showDevices
 import navigator
 
 /**
@@ -37,15 +39,9 @@ class Sidebar {
         Column {
             val menuItems = mapOf(
                 Pair("Create", Pair(Default.Add) { CreateForm().createPassword() }),
-                Pair("Insert", Pair(Default.Create) {
-                    println("insert")
-                }),
-                Pair("Session", Pair(Default.ManageAccounts) {
-                    println("session")
-                }),
-                Pair("Devices", Pair(Default.Devices) {
-                    println("devices")
-                })
+                Pair("Insert", Pair(Default.Create) { InsertForm().insertPassword() }),
+                Pair("Passwords", Pair(Default.ViewList) { showDevices.value = false }),
+                Pair("Account", Pair(Default.ManageAccounts) { showDevices.value = true })
             )
             Divider(thickness = 1.dp, color = Color.White)
             menuItems.forEach { item ->

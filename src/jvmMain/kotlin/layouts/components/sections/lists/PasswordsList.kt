@@ -1,10 +1,12 @@
-package layouts.components.sections
+@file:Suppress("UNCHECKED_CAST")
 
-import androidx.compose.foundation.*
+package layouts.components.sections.lists
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons.Default
@@ -21,8 +23,8 @@ import androidx.compose.ui.unit.sp
 import com.tecknobit.glider.records.Password
 import com.tecknobit.glider.records.Password.Status.ACTIVE
 import com.tecknobit.glider.records.Password.Status.DELETED
-import helpers.backgroundColor
 import helpers.greenColor
+import helpers.primaryColor
 import helpers.redColor
 import layouts.components.GliderTextField
 
@@ -30,8 +32,9 @@ import layouts.components.GliderTextField
  * This is the layout for the list section where there is the list of the passwords
  *
  * @author Tecknobit - N7ghtm4r3
+ * @see List
  * **/
-class ListSection {
+class PasswordsList : List() {
 
     /**
      * **lSelected** -> trigger flag to filter the [ACTIVE] passwords
@@ -49,18 +52,53 @@ class ListSection {
     private lateinit var querySearch: MutableState<String>
 
     /**
-     * **selectedPassword** -> the selected password
-     */
-    private lateinit var selectedPassword: MutableState<Password>
-
-    /**
-     * Method to create the [ListSection] view. No-any params required
+     * Method to create the [PasswordsList] view. No-any params required
      */
     @Composable
-    fun listSection() {
+    fun showPasswords() {
         lSelected = remember { mutableStateOf(true) }
         rSelected = remember { mutableStateOf(false) }
         querySearch = remember { mutableStateOf("") }
+        // TODO: USE THE CORRECT LIST
+        itemsList = mutableListOf(
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gag41414142141414141414142141424", ACTIVE),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
+            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
+            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
+            Password(null, "tat", ArrayList<String>(listOf("List", "Netflix")), "gaga", DELETED),
+            Password(
+                null,
+                "tat1",
+                ArrayList<String>(listOf("List1", "Youtube", "Netflix", "Gagag", "gagfaga")),
+                "gaga",
+                DELETED
+            ),
+            Password(
+                null,
+                "tat1",
+                ArrayList<String>(listOf("List1", "Youtube", "Netflix", "Gagag", "gagfaga")),
+                "gaga",
+                ACTIVE
+            )
+        )
         Column(
             modifier = Modifier.fillMaxSize().padding(top = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -130,113 +168,44 @@ class ListSection {
                     }
                 }
             }
-            loadPasswordsList()
-        }
-    }
-
-    /**
-     * Method to load the passwords list. No-any params required
-     */
-    @Composable
-    private fun loadPasswordsList() {
-        // TODO: TO USE THE CORRECT LIST OF PASSWORDS TO FILTER
-        val dPasswords = listOf(
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gag41414142141414141414142141424", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat", ArrayList<String>(listOf("List", "Netflix")), "gaga", DELETED),
-            Password(
-                null,
-                "tat1",
-                ArrayList<String>(listOf("List1", "Youtube", "Netflix", "Gagag", "gagfaga")),
-                "gaga",
-                DELETED
-            ),
-            Password(
-                null,
-                "tat1",
-                ArrayList<String>(listOf("List1", "Youtube", "Netflix", "Gagag", "gagfaga")),
-                "gaga",
-                ACTIVE
-            )
-        )
-        val passwords = filterPasswords(dPasswords)
-        val listState = rememberLazyListState()
-        selectedPassword = remember { mutableStateOf(passwords[0]) }
-        Spacer(Modifier.height(16.dp))
-        LazyColumn(
-            modifier = Modifier.height(1000.dp),
-            state = listState,
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(passwords) { password ->
-                Card(
-                    modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
-                        selectedPassword.value = password
-                    },
-                    backgroundColor = Color.White,
-                    shape = RoundedCornerShape(10.dp),
-                    elevation = 5.dp
-                ) {
-                    Row {
-                        Column(
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(start = 10.dp),
-                                text = password.tail,
-                                fontSize = 20.sp
-                            )
-                        }
-                        Column(
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                            horizontalAlignment = Alignment.End,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Box(
-                                modifier = Modifier.background(if (password.status == ACTIVE) greenColor else redColor)
-                                    .fillMaxHeight().width(100.dp)
-                            )
+            loadList {
+                val passwords = filterPasswords(itemsList as MutableList<Password>)
+                items(passwords) { password ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
+                            selectedItem.value = password
+                        },
+                        backgroundColor = Color.White,
+                        shape = RoundedCornerShape(10.dp),
+                        elevation = 5.dp
+                    ) {
+                        Row {
+                            Column(
+                                modifier = Modifier.weight(1f).fillMaxHeight(),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(start = 10.dp),
+                                    text = password.tail,
+                                    color = primaryColor,
+                                    fontSize = 20.sp
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.weight(1f).fillMaxHeight(),
+                                horizontalAlignment = Alignment.End,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier.background(if (password.status == ACTIVE) greenColor else redColor)
+                                        .fillMaxHeight().width(100.dp)
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-        VerticalScrollbar(
-            style = ScrollbarStyle(
-                minimalHeight = LocalScrollbarStyle.current.minimalHeight,
-                hoverColor = backgroundColor,
-                unhoverColor = Color.Transparent,
-                hoverDurationMillis = LocalScrollbarStyle.current.hoverDurationMillis,
-                thickness = LocalScrollbarStyle.current.thickness,
-                shape = LocalScrollbarStyle.current.shape
-            ),
-            modifier = Modifier.fillMaxHeight(),
-            adapter = rememberScrollbarAdapter(
-                scrollState = listState
-            )
-        )
     }
 
     /**
@@ -244,7 +213,7 @@ class ListSection {
      * @param currentPasswords: the current passwords list to filter
      * @return the list of the passwords filtered as [MutableList] of [Password]
      */
-    private fun filterPasswords(currentPasswords: List<Password>): MutableList<Password> {
+    private fun filterPasswords(currentPasswords: MutableList<Password>): MutableList<Password> {
         val passwords = mutableListOf<Password>()
         currentPasswords.forEach { password ->
             val sPassword = password.status
@@ -274,14 +243,6 @@ class ListSection {
             }
         }
         return passwords
-    }
-
-    /**
-     * Method to get the selected password from the list. No-any params required
-     * @return the selected password as [Password]
-     */
-    fun selectedPassword(): Password {
-        return selectedPassword.value
     }
 
 }

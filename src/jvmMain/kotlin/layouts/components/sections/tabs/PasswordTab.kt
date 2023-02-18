@@ -1,4 +1,4 @@
-package layouts.components.sections
+package layouts.components.sections.tabs
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
