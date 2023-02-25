@@ -57,7 +57,6 @@ class PasswordsList : List() {
         lSelected = remember { mutableStateOf(true) }
         rSelected = remember { mutableStateOf(false) }
         querySearch = remember { mutableStateOf("") }
-        itemsList = remember { mutableStateListOf() }
         itemsList.clear()
         itemsList.addAll(passwords)
         Column(

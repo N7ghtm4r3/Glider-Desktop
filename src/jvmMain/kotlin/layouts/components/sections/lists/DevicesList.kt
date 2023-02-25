@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,7 +42,6 @@ class DevicesList : List() {
      */
     @Composable
     fun showDevices() {
-        itemsList = remember { mutableStateListOf() }
         itemsList.clear()
         itemsList.addAll(devices)
         Column(
@@ -69,52 +67,55 @@ class DevicesList : List() {
                     )
                 }
             }
+            selectedItem = remember { mutableStateOf(null) }
             if (!user.isSingleUseMode) {
-                loadList {
-                    items(itemsList) { device ->
-                        device as Device
-                        Card(
-                            modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
-                                selectedItem.value = device
-                            },
-                            backgroundColor = Color.White,
-                            shape = RoundedCornerShape(10.dp),
-                            elevation = 5.dp
-                        ) {
-                            Row {
-                                Column(
-                                    modifier = Modifier.weight(1f).fillMaxHeight(),
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        modifier = Modifier.padding(start = 10.dp),
-                                        text = device.name,
-                                        color = primaryColor,
-                                        fontSize = 20.sp
-                                    )
-                                }
-                                Column(
-                                    modifier = Modifier.weight(1f).fillMaxHeight(),
-                                    horizontalAlignment = Alignment.End,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Box(
-                                        modifier = Modifier.background(primaryColor).fillMaxHeight().width(100.dp),
-                                        contentAlignment = Alignment.Center
+                if (itemsList.size > 0) {
+                    loadList {
+                        items(itemsList) { device ->
+                            device as Device
+                            Card(
+                                modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
+                                    selectedItem.value = device
+                                },
+                                backgroundColor = Color.White,
+                                shape = RoundedCornerShape(10.dp),
+                                elevation = 5.dp
+                            ) {
+                                Row {
+                                    Column(
+                                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                                        verticalArrangement = Arrangement.Center
                                     ) {
-                                        Icon(
-                                            imageVector = if (device.type == DESKTOP) Default.Computer else Default.PhoneAndroid,
-                                            contentDescription = null,
-                                            tint = Color.White
+                                        Text(
+                                            modifier = Modifier.padding(start = 10.dp),
+                                            text = device.name,
+                                            color = primaryColor,
+                                            fontSize = 20.sp
                                         )
+                                    }
+                                    Column(
+                                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                                        horizontalAlignment = Alignment.End,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Box(
+                                            modifier = Modifier.background(primaryColor).fillMaxHeight().width(100.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = if (device.type == DESKTOP) Default.Computer else Default.PhoneAndroid,
+                                                contentDescription = null,
+                                                tint = Color.White
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            } else
-                selectedItem = remember { mutableStateOf(null) }
+                } else
+                    selectedItem.value = null
+            }
         }
     }
 

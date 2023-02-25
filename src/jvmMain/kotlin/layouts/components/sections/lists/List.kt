@@ -26,7 +26,7 @@ abstract class List {
     /**
      * **itemsList** -> items list to create the view
      */
-    protected lateinit var itemsList: MutableList<Any>
+    protected var itemsList: MutableList<Any> = mutableStateListOf()
 
     /**
      * **selectedItem** -> the selected item to work on

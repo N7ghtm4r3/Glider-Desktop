@@ -1,5 +1,6 @@
 package helpers
 
+import androidx.compose.runtime.mutableStateListOf
 import com.tecknobit.glider.records.Device
 import com.tecknobit.glider.records.Password
 import com.tecknobit.glider.records.Session
@@ -38,17 +39,17 @@ class User : Session(
         /**
          * `user` instance to manage statically the session of the user
          */
-        val user: User = User()
+        var user: User = User()
 
         /**
          * **passwords** -> list of the [Password] of the session
          */
-        val passwords: MutableList<Password> = mutableListOf()
+        val passwords: MutableList<Password> = mutableStateListOf()
 
         /**
          * **devices** -> list of the [Device] connected to the session
          */
-        val devices: MutableList<Device> = mutableListOf()
+        val devices: MutableList<Device> = mutableStateListOf()
 
     }
 
@@ -60,6 +61,7 @@ class User : Session(
     fun insertUserSession(sessionData: JSONObject) {
         for (key: String in sessionData.keySet())
             prefs.put(key, sessionData.get(key).toString())
+        user = User()
     }
 
     /**
@@ -68,6 +70,9 @@ class User : Session(
     fun clearUserSession() {
         try {
             prefs.clear()
+            passwords.clear()
+            devices.clear()
+            user = User()
         } catch (e: BackingStoreException) {
             throw RuntimeException(e)
         }
