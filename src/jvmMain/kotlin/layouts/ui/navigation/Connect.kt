@@ -24,14 +24,20 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation.Companion.None
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.apimanager.apis.SocketManager
+import com.tecknobit.apimanager.apis.encryption.aes.ClientCipher.Algorithm.CBC_ALGORITHM
+import com.tecknobit.glider.helpers.GliderLauncher.GliderKeys.ope
 import com.tecknobit.glider.helpers.GliderLauncher.Operation
 import com.tecknobit.glider.helpers.GliderLauncher.Operation.CONNECT
+import com.tecknobit.glider.helpers.GliderLauncher.Operation.GET_PUBLIC_KEYS
 import com.tecknobit.glider.records.Session.SessionKeys.*
 import helpers.*
+import helpers.User.Companion.user
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.GliderButton
 import layouts.components.GliderTextField
 import navigator
+import org.json.JSONObject
 import java.awt.Desktop
 import java.net.URI
 
@@ -236,10 +242,26 @@ class Connect : RequestManager() {
                                 Spacer(Modifier.height(50.dp))
                                 GliderButton(
                                     onClick = {
-                                        setRequestPayload(CONNECT, host, password, port)
+                                        setRequestPayload(GET_PUBLIC_KEYS, host, password, port)
                                         if (payload != null) {
-                                            // TODO: REQUEST THEN
-                                            navigator.navigate(mainScreen.name)
+                                            socketManager = SocketManager(host, port.toInt())
+                                            socketManager!!.writeContent(payload)
+                                            response = JSONObject(socketManager!!.readContent())
+                                            socketManager = SocketManager(
+                                                host,
+                                                port.toInt(),
+                                                response.getString(ivSpec.name),
+                                                response.getString(secretKey.name),
+                                                CBC_ALGORITHM
+                                            )
+                                            payload!!.put(ope.name, CONNECT)
+                                            socketManager!!.writeContent(payload)
+                                            response = JSONObject(socketManager!!.readContent())
+                                            if (successfulResponse()) {
+                                                user.insertUserSession(response.getJSONObject(session.name))
+                                                navigator.navigate(mainScreen.name)
+                                            } else
+                                                showSnack(scope, scaffoldState, "Operation failed")
                                         }
                                     },
                                     text = "Connect"

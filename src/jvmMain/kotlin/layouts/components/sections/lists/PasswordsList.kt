@@ -11,10 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.tecknobit.glider.records.Password
 import com.tecknobit.glider.records.Password.Status.ACTIVE
 import com.tecknobit.glider.records.Password.Status.DELETED
+import helpers.User.Companion.passwords
 import helpers.greenColor
 import helpers.primaryColor
 import helpers.redColor
@@ -59,46 +57,9 @@ class PasswordsList : List() {
         lSelected = remember { mutableStateOf(true) }
         rSelected = remember { mutableStateOf(false) }
         querySearch = remember { mutableStateOf("") }
-        // TODO: USE THE CORRECT LIST
-        itemsList = mutableListOf(
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gag41414142141414141414142141424", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", ACTIVE),
-            Password(null, "tat", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat1", ArrayList<String>(listOf("List")), "gaga", DELETED),
-            Password(null, "tat", ArrayList<String>(listOf("List", "Netflix")), "gaga", DELETED),
-            Password(
-                null,
-                "tat1",
-                ArrayList<String>(listOf("List1", "Youtube", "Netflix", "Gagag", "gagfaga")),
-                "gaga",
-                DELETED
-            ),
-            Password(
-                null,
-                "tat1",
-                ArrayList<String>(listOf("List1", "Youtube", "Netflix", "Gagag", "gagfaga")),
-                "gaga",
-                ACTIVE
-            )
-        )
+        itemsList = remember { mutableStateListOf() }
+        itemsList.clear()
+        itemsList.addAll(passwords)
         Column(
             modifier = Modifier.fillMaxSize().padding(top = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -169,44 +130,46 @@ class PasswordsList : List() {
                         }
                     }
                 }
-            }
-            if (itemsList.size > 0) {
                 loadList {
                     val passwords = filterPasswords(itemsList as MutableList<Password>)
-                    items(passwords) { password ->
-                        Card(
-                            modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
-                                selectedItem.value = password
-                            },
-                            backgroundColor = Color.White,
-                            shape = RoundedCornerShape(10.dp),
-                            elevation = 5.dp
-                        ) {
-                            Row {
-                                Column(
-                                    modifier = Modifier.weight(1f).fillMaxHeight(),
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        modifier = Modifier.padding(start = 10.dp),
-                                        text = password.tail,
-                                        color = primaryColor,
-                                        fontSize = 20.sp
-                                    )
-                                }
-                                Column(
-                                    modifier = Modifier.weight(1f).fillMaxHeight(),
-                                    horizontalAlignment = Alignment.End,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Box(
-                                        modifier = Modifier.background(if (password.status == ACTIVE) greenColor else redColor)
-                                            .fillMaxHeight().width(100.dp)
-                                    )
+                    if (passwords.size > 0) {
+                        selectedItem.value = passwords[0]
+                        items(passwords) { password ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
+                                    selectedItem.value = password
+                                },
+                                backgroundColor = Color.White,
+                                shape = RoundedCornerShape(10.dp),
+                                elevation = 5.dp
+                            ) {
+                                Row {
+                                    Column(
+                                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.padding(start = 10.dp),
+                                            text = password.tail,
+                                            color = primaryColor,
+                                            fontSize = 20.sp
+                                        )
+                                    }
+                                    Column(
+                                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                                        horizontalAlignment = Alignment.End,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Box(
+                                            modifier = Modifier.background(if (password.status == ACTIVE) greenColor else redColor)
+                                                .fillMaxHeight().width(100.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
+                    } else
+                        selectedItem.value = null
                 }
             } else
                 selectedItem = remember { mutableStateOf(null) }
@@ -219,7 +182,7 @@ class PasswordsList : List() {
      * @return the list of the passwords filtered as [MutableList] of [Password]
      */
     private fun filterPasswords(currentPasswords: MutableList<Password>): MutableList<Password> {
-        val passwords = mutableListOf<Password>()
+        val passwords = mutableStateListOf<Password>()
         currentPasswords.forEach { password ->
             val sPassword = password.status
             if ((lSelected.value && sPassword == ACTIVE) || (rSelected.value && sPassword == DELETED)) {

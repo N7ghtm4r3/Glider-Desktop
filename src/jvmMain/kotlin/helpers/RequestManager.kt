@@ -1,6 +1,10 @@
 package helpers
 
+import com.tecknobit.apimanager.apis.SocketManager
+import com.tecknobit.apimanager.apis.SocketManager.StandardResponseCode.SUCCESSFUL
+import com.tecknobit.apimanager.apis.encryption.aes.ClientCipher.Algorithm.CBC_ALGORITHM
 import com.tecknobit.glider.helpers.GliderLauncher
+import com.tecknobit.glider.helpers.GliderLauncher.GliderKeys.statusCode
 import com.tecknobit.glider.records.Device.DeviceKeys
 import com.tecknobit.glider.records.Device.Type.DESKTOP
 import com.tecknobit.glider.records.Session.SessionKeys
@@ -26,6 +30,24 @@ open class RequestManager {
      */
     protected var payload: JSONObject? = JSONObject()
 
+    companion object {
+
+        /**
+         * **socketManager** -> the manager of the requests
+         */
+        var socketManager: SocketManager? =
+            if (user.token != null)
+                SocketManager(user.hostAddress, user.hostPort, user.ivSpec, user.secretKey, CBC_ALGORITHM)
+            else
+                null
+
+        /**
+         * **response** -> the response result of the requests
+         */
+        var response: JSONObject = JSONObject()
+
+    }
+
     /**
      * Method to create the payload for a request
      *
@@ -41,6 +63,15 @@ open class RequestManager {
         payload!!.put(DeviceKeys.name.name, DEVICE_NAME)
             .put(DeviceKeys.type.name, DESKTOP)
             .put(SessionKeys.sessionPassword.name, user.sessionPassword)
+    }
+
+    /**
+     * Method to get whether the request has got a successful response status. No-any params required
+     *
+     * @return whether the request has got a successful response status
+     */
+    fun successfulResponse(): Boolean {
+        return response.getString(statusCode.name) == SUCCESSFUL.name
     }
 
 }

@@ -42,8 +42,7 @@ class SplashScreen {
                 animationSpec = tween(durationMillis = 1000)
             )
             delay(500)
-            // TODO: RIGHT NAVIGATION WORKFLOW !=
-            if (user.token == null)
+            if (user.token != null)
                 navigator.navigate(mainScreen.name)
             else
                 navigator.navigate(connect.name)

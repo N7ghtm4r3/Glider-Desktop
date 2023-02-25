@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,15 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tecknobit.apimanager.formatters.TimeFormatter.getStringDate
 import com.tecknobit.glider.records.Device
 import com.tecknobit.glider.records.Device.Type.DESKTOP
+import helpers.User.Companion.devices
 import helpers.User.Companion.user
 import helpers.backgroundColor
 import helpers.primaryColor
 import helpers.redColor
-import java.lang.System.currentTimeMillis
-import java.net.InetAddress
 
 /**
  * This is the layout for the list section where there is the list of the devices connected to the session
@@ -44,93 +43,9 @@ class DevicesList : List() {
      */
     @Composable
     fun showDevices() {
-        // TODO: USE THE CORRECT LIST
-        itemsList = mutableListOf(
-            Device(
-                InetAddress.getLocalHost().hostName, "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), DESKTOP
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.DESKTOP
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                InetAddress.getLocalHost().hostName, "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.DESKTOP
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.DESKTOP
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                InetAddress.getLocalHost().hostName, "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.DESKTOP
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.DESKTOP
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                InetAddress.getLocalHost().hostName, "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.DESKTOP
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-            Device(
-                "gagagagaga", "192.168.1.10", getStringDate(currentTimeMillis()),
-                getStringDate(currentTimeMillis()), Device.Type.MOBILE
-            ),
-        )
+        itemsList = remember { mutableStateListOf() }
+        itemsList.clear()
+        itemsList.addAll(devices)
         Column(
             modifier = Modifier.fillMaxSize().padding(top = 46.dp),
             horizontalAlignment = Alignment.CenterHorizontally

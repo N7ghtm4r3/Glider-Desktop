@@ -1,6 +1,10 @@
 package helpers
 
+import com.tecknobit.glider.records.Device
+import com.tecknobit.glider.records.Password
 import com.tecknobit.glider.records.Session
+import com.tecknobit.glider.records.Session.SessionKeys.*
+import org.json.JSONObject
 import java.util.prefs.BackingStoreException
 import java.util.prefs.Preferences
 
@@ -13,15 +17,15 @@ import java.util.prefs.Preferences
  * @see Session
  */
 class User : Session(
-    prefs[SessionKeys.token.name, null],
-    prefs[SessionKeys.ivSpec.name, null],
-    prefs[SessionKeys.secretKey.name, null],
-    prefs[SessionKeys.sessionPassword.name, null],
-    prefs[SessionKeys.hostAddress.name, null],
-    prefs.getInt(SessionKeys.hostPort.name, -1),
-    prefs.getBoolean(SessionKeys.singleUseMode.name, true),
-    prefs.getBoolean(SessionKeys.QRCodeLoginEnabled.name, false),
-    prefs.getBoolean(SessionKeys.runInLocalhost.name, true)
+    prefs[token.name, null],
+    prefs[ivSpec.name, null],
+    prefs[secretKey.name, null],
+    prefs[sessionPassword.name, null],
+    prefs[hostAddress.name, null],
+    prefs.getInt(hostPort.name, -1),
+    prefs.getBoolean(singleUseMode.name, true),
+    prefs.getBoolean(QRCodeLoginEnabled.name, false),
+    prefs.getBoolean(runInLocalhost.name, true)
 ) {
 
     companion object {
@@ -36,6 +40,26 @@ class User : Session(
          */
         val user: User = User()
 
+        /**
+         * **passwords** -> list of the [Password] of the session
+         */
+        val passwords: MutableList<Password> = mutableListOf()
+
+        /**
+         * **devices** -> list of the [Device] connected to the session
+         */
+        val devices: MutableList<Device> = mutableListOf()
+
+    }
+
+    /**
+     * Method to insert a new session data
+     * @param sessionData: data of the session to save
+     * @throws Exception when an error occurred
+     */
+    fun insertUserSession(sessionData: JSONObject) {
+        for (key: String in sessionData.keySet())
+            prefs.put(key, sessionData.get(key).toString())
     }
 
     /**

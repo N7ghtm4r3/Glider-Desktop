@@ -143,6 +143,7 @@ fun dismissPopup() {
 @Composable
 fun createPopup() {
     scaffoldState = rememberScaffoldState()
+    coroutineScope = rememberCoroutineScope()
     Popup(
         alignment = Alignment.Center,
         focusable = true
