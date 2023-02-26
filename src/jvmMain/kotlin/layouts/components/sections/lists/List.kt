@@ -40,11 +40,6 @@ abstract class List {
      */
     @Composable
     protected fun loadList(content: LazyListScope.() -> Unit) {
-        selectedItem =
-            if (itemsList.size > 0)
-                remember { mutableStateOf(itemsList[0]) }
-            else
-                remember { mutableStateOf(null) }
         val listState = rememberLazyListState()
         Spacer(Modifier.height(16.dp))
         LazyColumn(
@@ -69,6 +64,12 @@ abstract class List {
             )
         )
     }
+
+    /**
+     * Method to create a tab layout
+     */
+    @Composable
+    abstract fun createTab()
 
     /**
      * Method to get the [selectedItem]. No-any params required

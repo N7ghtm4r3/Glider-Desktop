@@ -28,6 +28,7 @@ import helpers.User.Companion.user
 import helpers.backgroundColor
 import helpers.primaryColor
 import helpers.redColor
+import layouts.components.sections.tabs.DeviceTab
 
 /**
  * This is the layout for the list section where there is the list of the devices connected to the session
@@ -38,83 +39,97 @@ import helpers.redColor
 class DevicesList : List() {
 
     /**
+     * **deviceTab** -> manager of the [DeviceTab]
+     */
+    private lateinit var deviceTab: DeviceTab
+
+    /**
      * Method to create the [DevicesList] view. No-any params required
      */
     @Composable
     fun showDevices() {
+        selectedItem = remember { mutableStateOf(null) }
+        deviceTab = remember { DeviceTab() }
         itemsList.clear()
         itemsList.addAll(devices)
-        Column(
-            modifier = Modifier.fillMaxSize().padding(top = 46.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Card(
-                modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
-                backgroundColor = Color.White,
-                shape = RoundedCornerShape(10.dp),
-                elevation = 5.dp
+        Row {
+            Column(
+                modifier = Modifier.weight(1f).fillMaxHeight().padding(top = 46.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column {
-                    createCardHeader("Server details")
-                    createCardItem(Modifier.padding(start = 25.dp, top = 10.dp), "Address", user.hostAddress)
-                    createCardItem(key = "Port", value = user.hostPort)
-                    createCardHeader("Security")
-                    createCardItem(Modifier.padding(start = 25.dp, top = 10.dp), "Single use", user.isSingleUseMode)
-                    createCardItem(key = "QR Code login", value = user.isQRCodeLoginEnabled)
-                    createCardItem(
-                        Modifier.padding(start = 25.dp, bottom = 15.dp), key = "Only in localhost",
-                        value = user.runInLocalhost()
-                    )
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
+                    backgroundColor = Color.White,
+                    shape = RoundedCornerShape(10.dp),
+                    elevation = 5.dp
+                ) {
+                    Column {
+                        createCardHeader("Server details")
+                        createCardItem(Modifier.padding(start = 25.dp, top = 10.dp), "Address", user.hostAddress)
+                        createCardItem(key = "Port", value = user.hostPort)
+                        createCardHeader("Security")
+                        createCardItem(Modifier.padding(start = 25.dp, top = 10.dp), "Single use", user.isSingleUseMode)
+                        createCardItem(key = "QR Code login", value = user.isQRCodeLoginEnabled)
+                        createCardItem(
+                            Modifier.padding(start = 25.dp, bottom = 15.dp), key = "Only in localhost",
+                            value = user.runInLocalhost()
+                        )
+                    }
                 }
-            }
-            selectedItem = remember { mutableStateOf(null) }
-            if (!user.isSingleUseMode) {
-                if (itemsList.size > 0) {
-                    loadList {
-                        items(itemsList) { device ->
-                            device as Device
-                            Card(
-                                modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
-                                    selectedItem.value = device
-                                },
-                                backgroundColor = Color.White,
-                                shape = RoundedCornerShape(10.dp),
-                                elevation = 5.dp
-                            ) {
-                                Row {
-                                    Column(
-                                        modifier = Modifier.weight(1f).fillMaxHeight(),
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            modifier = Modifier.padding(start = 10.dp),
-                                            text = device.name,
-                                            color = primaryColor,
-                                            fontSize = 20.sp
-                                        )
-                                    }
-                                    Column(
-                                        modifier = Modifier.weight(1f).fillMaxHeight(),
-                                        horizontalAlignment = Alignment.End,
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Box(
-                                            modifier = Modifier.background(primaryColor).fillMaxHeight().width(100.dp),
-                                            contentAlignment = Alignment.Center
+                if (!user.isSingleUseMode) {
+                    if (itemsList.size > 0) {
+                        loadList {
+                            items(itemsList) { device ->
+                                device as Device
+                                Card(
+                                    modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
+                                        selectedItem.value = device
+                                    },
+                                    backgroundColor = Color.White,
+                                    shape = RoundedCornerShape(10.dp),
+                                    elevation = 5.dp
+                                ) {
+                                    Row {
+                                        Column(
+                                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                                            verticalArrangement = Arrangement.Center
                                         ) {
-                                            Icon(
-                                                imageVector = if (device.type == DESKTOP) Default.Computer else Default.PhoneAndroid,
-                                                contentDescription = null,
-                                                tint = Color.White
+                                            Text(
+                                                modifier = Modifier.padding(start = 10.dp),
+                                                text = device.name,
+                                                color = primaryColor,
+                                                fontSize = 20.sp
                                             )
+                                        }
+                                        Column(
+                                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                                            horizontalAlignment = Alignment.End,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Box(
+                                                modifier = Modifier.background(primaryColor).fillMaxHeight()
+                                                    .width(100.dp),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = if (device.type == DESKTOP) Default.Computer else Default.PhoneAndroid,
+                                                    contentDescription = null,
+                                                    tint = Color.White
+                                                )
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                } else
-                    selectedItem.value = null
+                    } else
+                        selectedItem.value = null
+                }
+            }
+            Column(
+                modifier = Modifier.weight(1f).fillMaxHeight().background(primaryColor)
+            ) {
+                createTab()
             }
         }
     }
@@ -162,6 +177,14 @@ class DevicesList : List() {
                 fontSize = 16.sp
             )
         }
+    }
+
+    /**
+     * Method to create the [DeviceTab] layout
+     */
+    @Composable
+    override fun createTab() {
+        deviceTab.createDeviceTab(selectedItem())
     }
 
 }

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons.Default
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +25,7 @@ import helpers.greenColor
 import helpers.primaryColor
 import helpers.redColor
 import layouts.components.GliderTextField
+import layouts.components.sections.tabs.PasswordTab
 
 /**
  * This is the layout for the list section where there is the list of the passwords
@@ -50,6 +51,21 @@ class PasswordsList : List() {
     private lateinit var querySearch: MutableState<String>
 
     /**
+     * **passwordTab** -> manager of the [PasswordTab]
+     */
+    private lateinit var passwordTab: PasswordTab
+
+    /**
+     * **filteredPasswords** -> list of the filtered [Password]
+     */
+    private var filteredPasswords: MutableList<Password> = mutableStateListOf()
+
+    /**
+     * **loadFirstItem** -> whether load the first of the list
+     */
+    private var loadFirstItem: Boolean = true
+
+    /**
      * Method to create the [PasswordsList] view. No-any params required
      */
     @Composable
@@ -57,112 +73,123 @@ class PasswordsList : List() {
         lSelected = remember { mutableStateOf(true) }
         rSelected = remember { mutableStateOf(false) }
         querySearch = remember { mutableStateOf("") }
+        selectedItem = remember { mutableStateOf(null) }
+        passwordTab = remember { PasswordTab() }
         itemsList.clear()
         itemsList.addAll(passwords)
-        Column(
-            modifier = Modifier.fillMaxSize().padding(top = 40.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (itemsList.size > 0) {
-                Column {
-                    GliderTextField(
-                        modifier = Modifier.height(60.dp),
-                        text = "Filter by tail or scopes",
-                        value = querySearch.value,
-                        onChange = {
-                            querySearch.value = it
-                        },
-                        leadingIcon = Default.Search,
-                        trailingIcon = Default.Clear,
-                        trailingOnClick = {
-                            querySearch.value = ""
-                        }
-                    )
-                }
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 25.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Row {
-                            OutlinedButton(
-                                shape = RoundedCornerShape(100.dp),
-                                border = BorderStroke(2.dp, greenColor),
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (lSelected.value) greenColor else Color.Transparent
-                                ),
-                                onClick = {
-                                    if (!lSelected.value)
-                                        lSelected.value = true
-                                    rSelected.value = false
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Default.ViewList,
-                                    contentDescription = null,
-                                    tint = if (!lSelected.value) greenColor else Color.White
-                                )
+        Row {
+            Column(
+                modifier = Modifier.weight(1f).fillMaxHeight().padding(top = 40.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (itemsList.size > 0) {
+                    Column {
+                        GliderTextField(
+                            modifier = Modifier.height(60.dp),
+                            text = "Filter by tail or scopes",
+                            value = querySearch.value,
+                            onChange = {
+                                querySearch.value = it
+                            },
+                            leadingIcon = Icons.Default.Search,
+                            trailingIcon = Icons.Default.Clear,
+                            trailingOnClick = {
+                                querySearch.value = ""
                             }
-                        }
-                        Spacer(Modifier.width(25.dp))
-                        Row {
-                            OutlinedButton(
-                                shape = RoundedCornerShape(100.dp),
-                                border = BorderStroke(2.dp, redColor),
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (rSelected.value) redColor else Color.Transparent
-                                ),
-                                onClick = {
-                                    if (!rSelected.value)
-                                        rSelected.value = true
-                                    lSelected.value = false
+                        )
+                    }
+                    Box(
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(top = 25.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Row {
+                                OutlinedButton(
+                                    shape = RoundedCornerShape(100.dp),
+                                    border = BorderStroke(2.dp, greenColor),
+                                    colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = if (lSelected.value) greenColor else Color.Transparent
+                                    ),
+                                    onClick = {
+                                        lSelected.value = !lSelected.value
+                                        rSelected.value = !rSelected.value
+                                        loadFirstItem = true
+                                        passwordTab.hidePassword()
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ViewList,
+                                        contentDescription = null,
+                                        tint = if (!lSelected.value) greenColor else Color.White
+                                    )
                                 }
-                            ) {
-                                Icon(
-                                    imageVector = Default.Delete,
-                                    contentDescription = null,
-                                    tint = if (!rSelected.value) redColor else Color.White
-                                )
+                            }
+                            Spacer(Modifier.width(25.dp))
+                            Row {
+                                OutlinedButton(
+                                    shape = RoundedCornerShape(100.dp),
+                                    border = BorderStroke(2.dp, redColor),
+                                    colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = if (rSelected.value) redColor else Color.Transparent
+                                    ),
+                                    onClick = {
+                                        rSelected.value = !rSelected.value
+                                        lSelected.value = !lSelected.value
+                                        loadFirstItem = true
+                                        passwordTab.hidePassword()
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = null,
+                                        tint = if (!rSelected.value) redColor else Color.White
+                                    )
+                                }
                             }
                         }
                     }
-                }
-                loadList {
-                    val passwords = filterPasswords(itemsList as MutableList<Password>)
-                    if (passwords.size > 0) {
-                        selectedItem.value = passwords[0]
-                        items(passwords) { password ->
-                            Card(
-                                modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
-                                    selectedItem.value = password
-                                },
-                                backgroundColor = Color.White,
-                                shape = RoundedCornerShape(10.dp),
-                                elevation = 5.dp
-                            ) {
-                                Row {
-                                    Column(
-                                        modifier = Modifier.weight(1f).fillMaxHeight(),
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            modifier = Modifier.padding(start = 10.dp),
-                                            text = password.tail,
-                                            color = primaryColor,
-                                            fontSize = 20.sp
-                                        )
-                                    }
-                                    Column(
-                                        modifier = Modifier.weight(1f).fillMaxHeight(),
-                                        horizontalAlignment = Alignment.End,
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Box(
-                                            modifier = Modifier.background(if (password.status == ACTIVE) greenColor else redColor)
-                                                .fillMaxHeight().width(100.dp)
-                                        )
+                    filteredPasswords = filterPasswords(itemsList as MutableList<Password>)
+                    if (loadFirstItem && filteredPasswords.size > 0)
+                        selectedItem.value = filteredPasswords[0]
+                    if (filteredPasswords.size > 0) {
+                        loadList {
+                            items(filteredPasswords) { password ->
+                                Card(
+                                    modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
+                                        selectedItem.value = password
+                                        passwordTab.hidePassword()
+                                        loadFirstItem = false
+                                    },
+                                    backgroundColor = Color.White,
+                                    shape = RoundedCornerShape(10.dp),
+                                    elevation = 5.dp
+                                ) {
+                                    Row {
+                                        Column(
+                                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Text(
+                                                modifier = Modifier.padding(start = 10.dp),
+                                                text = password.tail,
+                                                color = primaryColor,
+                                                fontSize = 20.sp
+                                            )
+                                        }
+                                        Column(
+                                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                                            horizontalAlignment = Alignment.End,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Box(
+                                                modifier = Modifier.background(
+                                                    if (password.status == ACTIVE) greenColor
+                                                    else redColor
+                                                ).fillMaxHeight().width(100.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -170,8 +197,12 @@ class PasswordsList : List() {
                     } else
                         selectedItem.value = null
                 }
-            } else
-                selectedItem = remember { mutableStateOf(null) }
+            }
+            Column(
+                modifier = Modifier.weight(1f).fillMaxHeight().background(primaryColor)
+            ) {
+                createTab()
+            }
         }
     }
 
@@ -210,6 +241,14 @@ class PasswordsList : List() {
             }
         }
         return passwords
+    }
+
+    /**
+     * Method to create the [PasswordTab] layout
+     */
+    @Composable
+    override fun createTab() {
+        passwordTab.createPasswordTab(selectedItem())
     }
 
 }

@@ -26,8 +26,6 @@ import kotlinx.coroutines.withContext
 import layouts.components.sections.Sidebar
 import layouts.components.sections.lists.DevicesList
 import layouts.components.sections.lists.PasswordsList
-import layouts.components.sections.tabs.DeviceTab
-import layouts.components.sections.tabs.PasswordTab
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -57,9 +55,7 @@ class Main : RequestManager() {
         showPopup = rememberSaveable { mutableStateOf(false) }
         showDevices = rememberSaveable { mutableStateOf(false) }
         val passwordsList: PasswordsList = remember { PasswordsList() }
-        val passwordTab: PasswordTab = remember { PasswordTab() }
         val devicesList: DevicesList = remember { DevicesList() }
-        val deviceTab: DeviceTab = remember { DeviceTab() }
         refreshUserData()
         Scaffold(topBar = { TopAppBar(title = {}) }) {
             Box(
@@ -82,14 +78,6 @@ class Main : RequestManager() {
                             passwordsList.showPasswords()
                         else
                             devicesList.showDevices()
-                    }
-                    Column(
-                        modifier = Modifier.weight(1f).fillMaxHeight().background(primaryColor)
-                    ) {
-                        if (!showDevices.value)
-                            passwordTab.createPasswordTab(passwordsList.selectedItem())
-                        else
-                            deviceTab.createDeviceTab(devicesList.selectedItem())
                     }
                 }
             }

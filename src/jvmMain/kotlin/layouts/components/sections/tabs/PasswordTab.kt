@@ -8,10 +8,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +38,7 @@ class PasswordTab : Tab() {
     /**
      * **hidePassword** -> whether the [Password] is hidden
      */
-    private var hidePassword = mutableStateOf(true)
+    private var hidePassword: Boolean = true
 
     /**
      * **passwordStatus** -> the [Password]'s status
@@ -86,7 +85,7 @@ class PasswordTab : Tab() {
                                 }
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Delete,
+                                    imageVector = Default.Delete,
                                     contentDescription = null,
                                     tint = Color.White
                                 )
@@ -109,7 +108,7 @@ class PasswordTab : Tab() {
                                 }
                             ) {
                                 Icon(
-                                    imageVector = if (passwordStatus == Status.ACTIVE) Icons.Default.ContentCopy else Icons.Default.Restore,
+                                    imageVector = if (passwordStatus == Status.ACTIVE) Default.ContentCopy else Default.Restore,
                                     contentDescription = null,
                                     tint = primaryColor
                                 )
@@ -128,11 +127,11 @@ class PasswordTab : Tab() {
                         )
                         Row(Modifier.fillMaxWidth()) {
                             TextButton(
-                                onClick = { hidePassword.value = !hidePassword.value }
+                                onClick = { hidePassword = !hidePassword }
                             ) {
                                 Text(
                                     modifier = Modifier.padding(start = 45.dp, top = 10.dp),
-                                    text = if (!hidePassword.value) password.password else hidePassword(password),
+                                    text = if (!hidePassword) password.password else hidePassword(password),
                                     color = Color.White,
                                     fontSize = 20.sp
                                 )
@@ -169,7 +168,7 @@ class PasswordTab : Tab() {
                                         }
                                     ) {
                                         Icon(
-                                            imageVector = Icons.Default.Add,
+                                            imageVector = Default.Add,
                                             contentDescription = null,
                                             tint = primaryColor
                                         )
@@ -215,7 +214,7 @@ class PasswordTab : Tab() {
                                                         // TODO: REQUEST THEN
                                                         showSnack(coroutineScope, scaffoldState, "Scope deleted")
                                                     },
-                                                    imageVector = Icons.Default.Clear,
+                                                    imageVector = Default.Clear,
                                                     contentDescription = null
                                                 )
                                             }
@@ -234,6 +233,14 @@ class PasswordTab : Tab() {
 
     /**
      * Method to hide a password
+     */
+    fun hidePassword() {
+        hidePassword = true
+    }
+
+    /**
+     * Method to hide a password
+     *
      * @param password: the password to hide
      * @return password hidden as [String]
      */
