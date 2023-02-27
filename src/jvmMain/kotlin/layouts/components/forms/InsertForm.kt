@@ -11,9 +11,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.tecknobit.glider.helpers.GliderLauncher
+import com.tecknobit.glider.records.Password.*
 import helpers.*
 import layouts.components.GliderButton
 import layouts.components.GliderTextField
+import layouts.components.sections.Sidebar
+import org.json.JSONObject
 
 /**
  * **InsertForm** is the view where the user can insert a new password
@@ -57,14 +61,55 @@ class InsertForm : GliderForm() {
                 Spacer(Modifier.height(20.dp))
                 GliderButton(
                     onClick = {
-                        // TODO: REQUEST THEN
-                        dismissPopup()
+                        setRequestPayload(GliderLauncher.Operation.INSERT_PASSWORD, tail.value, password, scopes.value)
+                        if (payload != null) {
+                            socketManager!!.writeContent(payload)
+                            response = JSONObject(socketManager!!.readContent())
+                            if (successfulResponse()) {
+                                dismissPopup()
+                                showSnack(Sidebar.coroutineScope, Sidebar.scaffoldState, "Password inserted")
+                            } else
+                                showPopupSnack("Operation failed")
+                        }
                     },
                     text = "Insert"
                 )
             }
         }
         showPopup()
+    }
+
+    /**
+     * Method to create the payload for the [GliderLauncher.Operation.INSERT_PASSWORD] request
+     *
+     * @param operation the operation to perform
+     * @param params dynamic params list to attach to the [payload]
+     */
+    override fun <T> setRequestPayload(operation: GliderLauncher.Operation?, vararg params: T) {
+        super.setRequestPayload(operation, *params)
+        if (params[0].toString().isNotEmpty()) {
+            payload!!.put(PasswordKeys.tail.name, params[0])
+            val password = params[1].toString()
+            val lPassword = password.length
+            if (password.isNotEmpty()) {
+                if (lPassword in PASSWORD_MIN_LENGTH..PASSWORD_MAX_LENGTH) {
+                    payload!!.put(PasswordKeys.password.name, password)
+                    payload!!.put(PasswordKeys.scopes.name, params[2].toString().split(","))
+                } else {
+                    errorTriggered[1] = true
+                    showPopupSnack("The password length must be between 8 and 32 characters length")
+                    payload = null
+                }
+            } else {
+                errorTriggered[1] = true
+                showPopupSnack("Password is required")
+                payload = null
+            }
+        } else {
+            errorTriggered[0] = true
+            showPopupSnack("You must fill the tail field first")
+            payload = null
+        }
     }
 
 }

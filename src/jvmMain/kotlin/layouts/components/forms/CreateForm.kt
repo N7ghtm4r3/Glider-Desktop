@@ -1,7 +1,7 @@
 package layouts.components.forms
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.getValue
@@ -12,9 +12,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.glider.helpers.GliderLauncher
+import com.tecknobit.glider.helpers.GliderLauncher.Operation.CREATE_PASSWORD
+import com.tecknobit.glider.records.Password.*
 import helpers.*
 import layouts.components.GliderButton
 import layouts.components.GliderTextField
+import layouts.components.sections.Sidebar.Companion.coroutineScope
+import layouts.components.sections.Sidebar.Companion.scaffoldState
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * **CreateForm** is the view where the user can create a new password
@@ -48,16 +55,16 @@ class CreateForm : GliderForm() {
                 ) {
                     GliderTextField(
                         modifier = Modifier.width(180.dp),
-                        isError = errorTriggered[1],
+                        isError = errorTriggered[2],
                         text = "Length",
                         value = length,
                         onChange = {
                             length = it.replace(" ", "")
-                            errorTriggered[1] = length.isEmpty()
+                            errorTriggered[2] = length.isEmpty()
                         },
-                        leadingIcon = Icons.Default.Info,
+                        leadingIcon = Default.Info,
                         leadingOnClick = { showPopupSnack("Length of the password to create") },
-                        trailingIcon = Icons.Default.Clear,
+                        trailingIcon = Default.Clear,
                         trailingOnClick = {
                             length = ""
                         }
@@ -66,8 +73,16 @@ class CreateForm : GliderForm() {
                     GliderButton(
                         modifier = Modifier.width(90.dp).padding(top = 7.dp),
                         onClick = {
-                            // TODO: REQUEST THEN
-                            dismissPopup()
+                            setRequestPayload(CREATE_PASSWORD, tail.value, scopes.value, length)
+                            if (payload != null) {
+                                socketManager!!.writeContent(payload)
+                                response = JSONObject(socketManager!!.readContent())
+                                if (successfulResponse()) {
+                                    dismissPopup()
+                                    showSnack(coroutineScope, scaffoldState, "Password created")
+                                } else
+                                    showPopupSnack("Operation failed")
+                            }
                         },
                         text = "Create",
                         textSize = 16.5.sp
@@ -76,6 +91,38 @@ class CreateForm : GliderForm() {
             }
         }
         showPopup()
+    }
+
+    /**
+     * Method to create the payload for the [GliderLauncher.Operation.CREATE_PASSWORD] request
+     *
+     * @param operation the operation to perform
+     * @param params dynamic params list to attach to the [payload]
+     */
+    override fun <T> setRequestPayload(operation: GliderLauncher.Operation?, vararg params: T) {
+        super.setRequestPayload(operation, *params)
+        if (tail.value.isNotEmpty()) {
+            payload!!.put(PasswordKeys.tail.name, params[0])
+            try {
+                val pLength = Integer.parseInt(params[2].toString())
+                if (pLength in PASSWORD_MIN_LENGTH..PASSWORD_MAX_LENGTH) {
+                    payload!!.put(PasswordKeys.length.name, pLength)
+                    payload!!.put(PasswordKeys.scopes.name, JSONArray(params[1].toString().split(",")))
+                } else {
+                    errorTriggered[2] = true
+                    showPopupSnack("The password length must be between 8 and 32 characters length")
+                    payload = null
+                }
+            } catch (e: NumberFormatException) {
+                errorTriggered[2] = true
+                showPopupSnack("You must fill the length field first")
+                payload = null
+            }
+        } else {
+            errorTriggered[0] = true
+            showPopupSnack("You must fill the tail field first")
+            payload = null
+        }
     }
 
 }

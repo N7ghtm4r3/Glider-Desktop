@@ -34,6 +34,11 @@ abstract class List {
     protected lateinit var selectedItem: MutableState<Any?>
 
     /**
+     * **loadFirstItem** -> whether load the first of the list
+     */
+    protected var loadFirstItem: Boolean = true
+
+    /**
      * Method to load the [itemsList]
      *
      * @param content: the layout content to set for the list

@@ -4,23 +4,30 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Tab
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.glider.helpers.GliderLauncher.Operation
+import com.tecknobit.glider.helpers.GliderLauncher.Operation.DISCONNECT
+import com.tecknobit.glider.helpers.GliderLauncher.Operation.MANAGE_DEVICE_AUTHORIZATION
 import com.tecknobit.glider.records.Device
+import com.tecknobit.glider.records.Device.DeviceKeys
+import com.tecknobit.glider.records.Device.DeviceKeys.targetDevice
 import helpers.RequestManager
 import helpers.primaryColor
 import helpers.redColor
 import helpers.showSnack
+import org.json.JSONObject
 
 /**
  * This is the layout for the device tab where the user can manage own devices list connected to the session
@@ -32,13 +39,18 @@ import helpers.showSnack
 class DeviceTab : Tab() {
 
     /**
+     * **isBlacklisted** -> whether the [Device] has been blacklisted
+     */
+    private lateinit var isBlacklisted: MutableState<Boolean>
+
+    /**
      * Method to create the [DeviceTab] view
      * @param device: the device to manage and to create the tab
      */
     @Composable
     fun createDeviceTab(device: Device?) {
         if (device != null) {
-            val isBlacklisted = remember { mutableStateOf(device.isBlacklisted) }
+            isBlacklisted = remember { mutableStateOf(device.isBlacklisted) }
             createTab {
                 Row {
                     Column(Modifier.padding(start = 35.dp, top = 10.dp)) {
@@ -58,14 +70,14 @@ class DeviceTab : Tab() {
                                         backgroundColor = Color.White
                                     ),
                                     onClick = {
-                                        // TODO: REQUEST THEN
-                                        showSnack(coroutineScope, scaffoldState, "Device blacklisted successfully")
-                                        // AUTO REFRESHED
-                                        isBlacklisted.value = true
+                                        manageDevice(
+                                            MANAGE_DEVICE_AUTHORIZATION, device,
+                                            "Device blacklisted successfully", true
+                                        )
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Block,
+                                        imageVector = Default.Block,
                                         contentDescription = null,
                                         tint = primaryColor
                                     )
@@ -78,12 +90,14 @@ class DeviceTab : Tab() {
                                         backgroundColor = redColor
                                     ),
                                     onClick = {
-                                        // TODO: REQUEST THEN
-                                        showSnack(coroutineScope, scaffoldState, "Device disconnected successfully")
+                                        manageDevice(
+                                            DISCONNECT, device, "Device disconnected successfully",
+                                            false
+                                        )
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Logout,
+                                        imageVector = Default.Logout,
                                         contentDescription = null,
                                         tint = Color.White
                                     )
@@ -96,14 +110,14 @@ class DeviceTab : Tab() {
                                         backgroundColor = Color.White
                                     ),
                                     onClick = {
-                                        // TODO: REQUEST THEN
-                                        showSnack(coroutineScope, scaffoldState, "Device unblacklisted successfully")
-                                        // AUTO REFRESHED
-                                        isBlacklisted.value = false
+                                        manageDevice(
+                                            MANAGE_DEVICE_AUTHORIZATION, device,
+                                            "Device unblacklisted successfully", false
+                                        )
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Restore,
+                                        imageVector = Default.Restore,
                                         contentDescription = null,
                                         tint = primaryColor
                                     )
@@ -172,7 +186,30 @@ class DeviceTab : Tab() {
                 Divider(Modifier.padding(top = 30.dp), thickness = 1.dp, color = Color.White)
             }
         } else
-            showEmptyListLayout("No-any devices available")
+            showEmptyListLayout("No devices available")
+    }
+
+    /**
+     * Method to manage a device
+     *
+     * @param operation: the operation to execute -> [Operation.DISCONNECT], [Operation.MANAGE_DEVICE_AUTHORIZATION]
+     * @param device: the device to manage
+     * @param message: the message to show in the snackbar
+     * */
+    private fun manageDevice(operation: Operation, device: Device, message: String, blacklist: Boolean) {
+        setRequestPayload(operation, null)
+        payload!!.put(
+            targetDevice.name, JSONObject()
+                .put(DeviceKeys.name.name, device.name)
+                .put(DeviceKeys.ipAddress.name, device.ipAddress)
+        )
+        socketManager!!.writeContent(payload)
+        response = JSONObject(socketManager!!.readContent())
+        if (successfulResponse()) {
+            isBlacklisted.value = blacklist
+            showSnack(coroutineScope, scaffoldState, message)
+        } else
+            showSnack(coroutineScope, scaffoldState, "Operation failed")
     }
 
 }

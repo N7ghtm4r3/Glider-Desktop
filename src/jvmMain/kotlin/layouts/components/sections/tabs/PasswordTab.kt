@@ -16,12 +16,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.glider.helpers.GliderLauncher.Operation
+import com.tecknobit.glider.helpers.GliderLauncher.Operation.DELETE_PASSWORD
+import com.tecknobit.glider.helpers.GliderLauncher.Operation.RECOVER_PASSWORD
 import com.tecknobit.glider.records.Password
+import com.tecknobit.glider.records.Password.PasswordKeys
 import com.tecknobit.glider.records.Password.Status
 import helpers.RequestManager
 import helpers.primaryColor
 import helpers.redColor
 import helpers.showSnack
+import org.json.JSONObject
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.StringSelection
@@ -71,17 +76,13 @@ class PasswordTab : Tab() {
                                     backgroundColor = redColor
                                 ),
                                 onClick = {
-                                    if (passwordStatus == Status.DELETED) {
-                                        // TODO: REQUEST THEN
-                                        showSnack(
-                                            coroutineScope,
-                                            scaffoldState,
+                                    managePassword(
+                                        DELETE_PASSWORD, password.tail,
+                                        if (passwordStatus == Status.DELETED)
                                             "Password permanently deleted successfully"
-                                        )
-                                    } else {
-                                        // TODO: REQUEST THEN
-                                        showSnack(coroutineScope, scaffoldState, "Password deleted successfully")
-                                    }
+                                        else
+                                            "Password deleted successfully"
+                                    )
                                 }
                             ) {
                                 Icon(
@@ -97,10 +98,13 @@ class PasswordTab : Tab() {
                                     backgroundColor = Color.White
                                 ),
                                 onClick = {
-                                    if (passwordStatus == Status.DELETED) {
-                                        // TODO: REQUEST THEN
-                                        showSnack(coroutineScope, scaffoldState, "Password recovered successfully")
-                                    } else {
+                                    if (passwordStatus == Status.DELETED)
+                                        managePassword(
+                                            RECOVER_PASSWORD,
+                                            password.tail,
+                                            "Password recovered successfully"
+                                        )
+                                    else {
                                         val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
                                         clipboard.setContents(StringSelection(password.password), null)
                                         showSnack(coroutineScope, scaffoldState, "Password copied successfully")
@@ -228,7 +232,25 @@ class PasswordTab : Tab() {
                 }
             }
         } else
-            showEmptyListLayout("No-any passwords available")
+            showEmptyListLayout("No passwords available")
+    }
+
+    /**
+     * Method to manage a password
+     *
+     * @param operation: the operation to execute -> [Operation.DELETE_PASSWORD], [Operation.RECOVER_PASSWORD]
+     * @param tail: the tail of the password to manage
+     * @param message: the message to show in the snackbar
+     * */
+    private fun managePassword(operation: Operation, tail: String, message: String) {
+        setRequestPayload(operation, null)
+        payload!!.put(PasswordKeys.tail.name, tail)
+        socketManager!!.writeContent(payload)
+        response = JSONObject(socketManager!!.readContent())
+        if (successfulResponse())
+            showSnack(coroutineScope, scaffoldState, message)
+        else
+            showSnack(coroutineScope, scaffoldState, "Operation failed")
     }
 
     /**

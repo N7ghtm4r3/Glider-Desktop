@@ -64,6 +64,15 @@ class Connect : RequestManager() {
      */
     private lateinit var scope: CoroutineScope
 
+    companion object {
+
+        /**
+         * **snackMessage** -> the message to show in the snackbar
+         */
+        var snackMessage: String? = null
+
+    }
+
     /**
      * Method to create the [Connect] view
      *
@@ -74,6 +83,10 @@ class Connect : RequestManager() {
         errorTriggered = remember { mutableStateListOf(false, false, false) }
         scaffoldState = rememberScaffoldState()
         scope = rememberCoroutineScope()
+        if (snackMessage != null) {
+            showSnack(scope, scaffoldState, snackMessage.toString())
+            snackMessage = null
+        }
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.background(cBackgroundColor).fillMaxSize()

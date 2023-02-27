@@ -78,12 +78,17 @@ class DevicesList : List() {
                 }
                 if (!user.isSingleUseMode) {
                     if (itemsList.size > 0) {
+                        if (loadFirstItem || selectedItem.value == null)
+                            selectedItem.value = itemsList[0]
                         loadList {
                             items(itemsList) { device ->
                                 device as Device
+                                if (device.name == (selectedItem.value as Device).name)
+                                    selectedItem.value = device
                                 Card(
                                     modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
                                         selectedItem.value = device
+                                        loadFirstItem = false
                                     },
                                     backgroundColor = Color.White,
                                     shape = RoundedCornerShape(10.dp),
@@ -160,7 +165,7 @@ class DevicesList : List() {
      * @param value: value of the card item to create
      * */
     @Composable
-    private fun createCardItem(modifier: Modifier = Modifier.padding(start = 25.dp), key: String, value: Any) {
+    private fun createCardItem(modifier: Modifier = Modifier.padding(start = 25.dp), key: String, value: Any?) {
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically

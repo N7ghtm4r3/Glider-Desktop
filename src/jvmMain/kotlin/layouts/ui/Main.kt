@@ -1,5 +1,6 @@
 package layouts.ui
 
+import Routes.connect
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
@@ -18,6 +19,7 @@ import com.tecknobit.glider.records.Password
 import helpers.*
 import helpers.User.Companion.devices
 import helpers.User.Companion.passwords
+import helpers.User.Companion.user
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
@@ -26,8 +28,13 @@ import kotlinx.coroutines.withContext
 import layouts.components.sections.Sidebar
 import layouts.components.sections.lists.DevicesList
 import layouts.components.sections.lists.PasswordsList
+import layouts.ui.navigation.Connect
+import layouts.ui.navigation.Connect.Companion.snackMessage
+import navigator
 import org.json.JSONArray
 import org.json.JSONObject
+import java.net.ConnectException
+import java.net.SocketException
 
 /**
  * This is the layout for the main screen of the application
@@ -40,9 +47,27 @@ class Main : RequestManager() {
     companion object {
 
         /**
+         * **continueRefreshData** -> whether continue to refresh the user session data
+         */
+        @Volatile
+        var continueRefreshData = true
+
+        /**
          * **showDevices** -> whether show the [PasswordsList] layout or the [DevicesList] layout
          */
         lateinit var showDevices: MutableState<Boolean>
+
+        /**
+         * Method to clear the user session and navigate to the [Connect] page
+         *
+         * @param message: the message to show in the snackbar
+         */
+        fun resetSession(message: String?) {
+            continueRefreshData = false
+            user.clearUserSession()
+            snackMessage = message
+            navigator.navigate(connect.name)
+        }
 
     }
 
@@ -88,34 +113,53 @@ class Main : RequestManager() {
      * Method to refresh the **Glider** data. No-any params required
      */
     private fun refreshUserData() {
+        continueRefreshData = true
         CoroutineScope(Default).launch {
             var currentPasswords = JSONArray()
             var currentDevices = JSONArray()
             while (true) {
-                this@Main.setRequestPayload(REFRESH_DATA, null)
-                socketManager!!.writeContent(payload)
-                response = JSONObject(socketManager!!.readContent())
-                if (successfulResponse()) {
-                    val jPasswords = response.getJSONArray(Table.passwords.name)
-                    val sPasswords = jPasswords.toString()
-                    if (currentPasswords.toString() != sPasswords) {
-                        passwords.clear()
-                        for (j in 0 until jPasswords.length())
-                            passwords.add(Password(jPasswords.getJSONObject(j)))
-                        currentPasswords = JSONArray(sPasswords)
+                if (continueRefreshData) {
+                    try {
+                        this@Main.setRequestPayload(REFRESH_DATA, null)
+                        socketManager!!.writeContent(payload)
+                        try {
+                            response = JSONObject(socketManager!!.readContent())
+                            if (successfulResponse()) {
+                                val jPasswords = response.getJSONArray(Table.passwords.name)
+                                val sPasswords = jPasswords.toString()
+                                if (currentPasswords.toString() != sPasswords) {
+                                    passwords.clear()
+                                    for (j in 0 until jPasswords.length())
+                                        passwords.add(Password(jPasswords.getJSONObject(j)))
+                                    currentPasswords = JSONArray(sPasswords)
+                                }
+                                val jDevices = response.getJSONArray(Table.devices.name)
+                                val sDevices = jDevices.toString()
+                                if (currentDevices.toString() != sDevices) {
+                                    devices.clear()
+                                    for (j in 0 until jDevices.length())
+                                        devices.add(Device(jDevices.getJSONObject(j)))
+                                    currentDevices = JSONArray(sDevices)
+                                }
+                            } else if (genericResponse())
+                                resetSession("This device has been disconnected")
+                            else
+                                resetSession("The session has been deleted")
+                        } catch (a: IllegalArgumentException) {
+                            // TODO: TO REMOVE THIS AFTER FIXED IT
+                            a.printStackTrace()
+                        } catch (s: SocketException) {
+                            resetSession("The session has been deleted")
+                        } finally {
+                            withContext(Dispatchers.IO) {
+                                Thread.sleep(5000)
+                            }
+                        }
+                    } catch (e: ConnectException) {
+                        resetSession("The session has been deleted")
                     }
-                    val jDevices = response.getJSONArray(Table.devices.name)
-                    val sDevices = jDevices.toString()
-                    if (currentDevices.toString() != sDevices) {
-                        devices.clear()
-                        for (j in 0 until jDevices.length())
-                            devices.add(Device(jDevices.getJSONObject(j)))
-                        currentDevices = JSONArray(sDevices)
-                    }
-                }
-                withContext(Dispatchers.IO) {
-                    Thread.sleep(5000)
-                }
+                } else
+                    break
             }
         }
     }

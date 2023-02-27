@@ -61,11 +61,6 @@ class PasswordsList : List() {
     private var filteredPasswords: MutableList<Password> = mutableStateListOf()
 
     /**
-     * **loadFirstItem** -> whether load the first of the list
-     */
-    private var loadFirstItem: Boolean = true
-
-    /**
      * Method to create the [PasswordsList] view. No-any params required
      */
     @Composable
@@ -89,6 +84,7 @@ class PasswordsList : List() {
                             text = "Filter by tail or scopes",
                             value = querySearch.value,
                             onChange = {
+                                loadFirstItem = true
                                 querySearch.value = it
                             },
                             leadingIcon = Icons.Default.Search,
@@ -151,11 +147,13 @@ class PasswordsList : List() {
                         }
                     }
                     filteredPasswords = filterPasswords(itemsList as MutableList<Password>)
-                    if (loadFirstItem && filteredPasswords.size > 0)
-                        selectedItem.value = filteredPasswords[0]
                     if (filteredPasswords.size > 0) {
+                        if (loadFirstItem || !filteredPasswords.contains(selectedItem.value))
+                            selectedItem.value = filteredPasswords[0]
                         loadList {
                             items(filteredPasswords) { password ->
+                                if (selectedItem.value != null && password.tail == (selectedItem.value as Password).tail)
+                                    selectedItem.value = password
                                 Card(
                                     modifier = Modifier.fillMaxWidth().height(65.dp).clickable {
                                         selectedItem.value = password
@@ -196,7 +194,8 @@ class PasswordsList : List() {
                         }
                     } else
                         selectedItem.value = null
-                }
+                } else
+                    selectedItem.value = null
             }
             Column(
                 modifier = Modifier.weight(1f).fillMaxHeight().background(primaryColor)

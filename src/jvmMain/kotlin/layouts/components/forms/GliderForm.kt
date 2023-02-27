@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +40,7 @@ open class GliderForm : RequestManager() {
     /**
      * **errorTriggered** -> the list of the triggers for the input fields
      */
-    protected var errorTriggered: MutableList<Boolean> = mutableListOf(false, false)
+    protected var errorTriggered: MutableList<Boolean> = mutableStateListOf(false, false, false)
 
     /**
      * Method to create the title layout
@@ -78,7 +79,7 @@ open class GliderForm : RequestManager() {
     }
 
     /**
-     * Method to create the scopes layout. No-any params required
+     * Method to create the scopes' layout. No-any params required
      */
     @Composable
     protected fun createScopesInput() {
