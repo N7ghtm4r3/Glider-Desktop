@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import com.tecknobit.apimanager.annotations.Wrapper
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -42,6 +43,8 @@ private lateinit var scaffoldState: ScaffoldState
  * **coroutineScope** -> the coroutine scope to manage the coroutines of the [scaffoldState]
  */
 private lateinit var coroutineScope: CoroutineScope
+
+private lateinit var pModifier: Modifier
 
 /**
  * Method to fill the content for the alert
@@ -126,8 +129,19 @@ fun fillPopupContent(content: @Composable BoxScope.() -> Unit) {
 /**
  * Method to set the [showPopup] value on **true** to show the popup. No-any params required
  */
+@Wrapper
 fun showPopup() {
+    showPopup(Modifier.width(400.dp).height(400.dp))
+}
+
+/**
+ * Method to set the [showPopup] value on **true** to show the popup
+ *
+ * @param popupModifier: modifier for the popup
+ */
+fun showPopup(popupModifier: Modifier) {
     showPopup.value = true
+    pModifier = popupModifier
 }
 
 /**
@@ -149,7 +163,7 @@ fun createPopup() {
         focusable = true
     ) {
         Card(
-            Modifier.width(400.dp).height(400.dp),
+            modifier = pModifier,
             shape = RoundedCornerShape(15.dp),
             elevation = 10.dp
         ) {

@@ -10,22 +10,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.glider.helpers.GliderLauncher.Operation
-import com.tecknobit.glider.helpers.GliderLauncher.Operation.DELETE_PASSWORD
-import com.tecknobit.glider.helpers.GliderLauncher.Operation.RECOVER_PASSWORD
+import com.tecknobit.glider.helpers.GliderLauncher.Operation.*
 import com.tecknobit.glider.records.Password
 import com.tecknobit.glider.records.Password.PasswordKeys
 import com.tecknobit.glider.records.Password.Status
-import helpers.RequestManager
-import helpers.primaryColor
-import helpers.redColor
-import helpers.showSnack
+import helpers.*
+import layouts.components.GliderButton
+import layouts.components.GliderTextField
 import org.json.JSONObject
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard
@@ -146,9 +145,8 @@ class PasswordTab : Tab() {
                 Divider(Modifier.padding(top = 30.dp), thickness = 1.dp, color = Color.White)
                 Row {
                     Column {
-                        Row(
+                        Column(
                             modifier = Modifier.padding(start = 35.dp, top = 10.dp),
-                            horizontalArrangement = Arrangement.Center
                         ) {
                             Row {
                                 Text(
@@ -157,74 +155,98 @@ class PasswordTab : Tab() {
                                     fontSize = 30.sp
                                 )
                             }
-                            if (passwordStatus == Status.ACTIVE) {
-                                Spacer(Modifier.width(10.dp))
-                                Row {
-                                    OutlinedButton(
-                                        shape = RoundedCornerShape(100),
-                                        border = BorderStroke(2.dp, Color.White),
-                                        colors = ButtonDefaults.buttonColors(
-                                            backgroundColor = Color.White
-                                        ),
-                                        onClick = {
-                                            // TODO: REQUEST THEN
-                                            showSnack(coroutineScope, scaffoldState, "Scope added successfully")
+                            Modifier.padding(top = 10.dp)
+                            Row {
+                                if (passwordStatus == Status.ACTIVE) {
+                                    Row {
+                                        OutlinedButton(
+                                            shape = RoundedCornerShape(100),
+                                            border = BorderStroke(2.dp, Color.White),
+                                            colors = ButtonDefaults.buttonColors(
+                                                backgroundColor = Color.White
+                                            ),
+                                            onClick = {
+                                                createPopupScope(
+                                                    "Add a new scope", "New scope",
+                                                    "The new scope to add", "Add", password.tail,
+                                                    message = "Scope added successfully"
+                                                )
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = Default.Add,
+                                                contentDescription = null,
+                                                tint = primaryColor
+                                            )
                                         }
-                                    ) {
-                                        Icon(
-                                            imageVector = Default.Add,
-                                            contentDescription = null,
-                                            tint = primaryColor
-                                        )
                                     }
                                 }
                             }
                         }
-                        LazyVerticalGrid(
-                            modifier = Modifier.padding(start = 20.dp, top = 10.dp),
-                            columns = GridCells.Adaptive(140.dp),
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(password.scopesSorted.toList()) { scope ->
-                                TextButton(
-                                    onClick = {
-                                        if (passwordStatus == Status.ACTIVE) {
-                                            // TODO: REQUEST THEN
-                                            showSnack(coroutineScope, scaffoldState, "Scope edited")
-                                        }
-                                    },
-                                    colors = ButtonDefaults.buttonColors(
-                                        backgroundColor = Color.White
-                                    ),
-                                    shape = RoundedCornerShape(100)
-                                ) {
-                                    Row {
-                                        Column(Modifier.weight(1f).fillMaxHeight().padding(start = 5.dp)) {
-                                            Text(
-                                                text = scope,
-                                                maxLines = 1
-                                            )
-                                        }
-                                        if (passwordStatus == Status.ACTIVE) {
-                                            Column(
-                                                modifier = Modifier.weight(1f).fillMaxHeight(),
-                                                horizontalAlignment = Alignment.End,
-                                                verticalArrangement = Arrangement.Center
-                                            ) {
-                                                Icon(
-                                                    modifier = Modifier.size(20.dp).clickable {
-                                                        // TODO: REQUEST THEN
-                                                        showSnack(coroutineScope, scaffoldState, "Scope deleted")
-                                                    },
-                                                    imageVector = Default.Clear,
-                                                    contentDescription = null
+                        val scopes = password.scopesSorted.toList()
+                        if (scopes.isNotEmpty()) {
+                            LazyVerticalGrid(
+                                modifier = Modifier.padding(start = 20.dp, top = 10.dp),
+                                columns = GridCells.Adaptive(140.dp),
+                                contentPadding = PaddingValues(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(scopes) { scope ->
+                                    TextButton(
+                                        onClick = {
+                                            if (passwordStatus == Status.ACTIVE) {
+                                                createPopupScope(
+                                                    "Edit an old scope", "Edit scope",
+                                                    "The scope to edit", "Edit", password.tail,
+                                                    scope, "Scope edited successfully"
                                                 )
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            backgroundColor = Color.White
+                                        ),
+                                        shape = RoundedCornerShape(100)
+                                    ) {
+                                        Row {
+                                            Column(Modifier.weight(1f).fillMaxHeight().padding(start = 5.dp)) {
+                                                Text(
+                                                    text = scope,
+                                                    maxLines = 1
+                                                )
+                                            }
+                                            if (passwordStatus == Status.ACTIVE) {
+                                                Column(
+                                                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                                                    horizontalAlignment = Alignment.End,
+                                                    verticalArrangement = Arrangement.Center
+                                                ) {
+                                                    Icon(
+                                                        modifier = Modifier.size(20.dp).clickable {
+                                                            manageScope(
+                                                                REMOVE_SCOPE, password.tail, scope,
+                                                                message = "Scope deleted successfully"
+                                                            )
+                                                        },
+                                                        imageVector = Default.Clear,
+                                                        contentDescription = null
+                                                    )
+                                                }
                                             }
                                         }
                                     }
                                 }
+                            }
+                        } else {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "No scopes attached",
+                                    color = Color.White,
+                                    fontSize = 18.sp
+                                )
                             }
                         }
                         Divider(Modifier.padding(top = 30.dp), thickness = 1.dp, color = Color.White)
@@ -233,6 +255,105 @@ class PasswordTab : Tab() {
             }
         } else
             showEmptyListLayout("No passwords available")
+    }
+
+    /**
+     * Method to create a popup to manage the [Operation.ADD_SCOPE] and [Operation.EDIT_SCOPE] operations
+     *
+     * @param title: the title of the popup
+     * @param hint: the hint message to show
+     * @param snackHint: the hint message to show in the snackbar
+     * @param btnText: the text of the button
+     * @param tail: the tail of the password to manage
+     * @param oldScope: the old scope to remove if filled
+     * @param message: the message to show in the snackbar
+     * */
+    private fun createPopupScope(
+        title: String, hint: String, snackHint: String, btnText: String, tail: String,
+        oldScope: String? = null, message: String
+    ) {
+        fillPopupContent {
+            var wScope by rememberSaveable { mutableStateOf("") }
+            val isInError = remember { mutableStateOf(false) }
+            Text(
+                modifier = Modifier.padding(start = 25.dp, top = 35.dp),
+                text = title,
+                fontSize = 18.sp,
+                color = primaryColor
+            )
+            Column(
+                modifier = Modifier.fillMaxSize().padding(top = 25.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                GliderTextField(
+                    modifier = Modifier.width(250.dp),
+                    isError = isInError.value,
+                    text = hint,
+                    value = wScope,
+                    onChange = {
+                        wScope = it.replace(" ", "")
+                        isInError.value = wScope.isEmpty()
+                    },
+                    leadingIcon = Default.Info,
+                    leadingOnClick = { showPopupSnack(snackHint) },
+                    trailingIcon = Default.Clear,
+                    trailingOnClick = {
+                        wScope = ""
+                    }
+                )
+                Spacer(Modifier.height(15.dp))
+                GliderButton(
+                    modifier = Modifier.width(250.dp),
+                    onClick = {
+                        if (wScope.isNotEmpty()) {
+                            manageScope(
+                                if (oldScope == null) ADD_SCOPE else EDIT_SCOPE,
+                                tail,
+                                wScope,
+                                oldScope,
+                                message
+                            )
+                            dismissPopup()
+                        } else {
+                            isInError.value = true
+                            showPopupSnack("The scope is required")
+                        }
+                    },
+                    text = btnText,
+                    textSize = 16.5.sp
+                )
+            }
+        }
+        showPopup(Modifier.width(300.dp).height(250.dp))
+    }
+
+    /**
+     * Method to manage a scope
+     *
+     * @param operation: the operation to execute -> [Operation.ADD_SCOPE], [Operation.EDIT_SCOPE], [Operation.REMOVE_SCOPE]
+     * @param tail: the tail of the password to manage
+     * @param scope: the scope to manage
+     * @param oldScope: the old scope to remove if filled
+     * @param message: the message to show in the snackbar
+     * */
+    private fun manageScope(
+        operation: Operation,
+        tail: String,
+        scope: String,
+        oldScope: String? = null,
+        message: String
+    ) {
+        setRequestPayload(operation, null)
+        payload!!.put(PasswordKeys.tail.name, tail).put(PasswordKeys.scope.name, scope)
+        if (oldScope != null)
+            payload!!.put(PasswordKeys.oldScope.name, oldScope)
+        socketManager!!.writeContent(payload)
+        response = JSONObject(socketManager!!.readContent())
+        if (successfulResponse())
+            showSnack(coroutineScope, scaffoldState, message)
+        else
+            showSnack(coroutineScope, scaffoldState, "Operation failed")
     }
 
     /**
