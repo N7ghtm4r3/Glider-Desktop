@@ -1,4 +1,4 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat.*
 
 plugins {
     kotlin("multiplatform")
@@ -26,7 +26,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation("com.github.N7ghtm4r3:Glider:1.0.1")
+                implementation("com.github.N7ghtm4r3:Glider:1.0.2")
                 implementation("org.json:json:20220924")
                 implementation("com.github.N7ghtm4r3:APIManager:2.1.0")
                 api(compose.foundation)
@@ -41,11 +41,30 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "LauncherKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(Deb, Rpm, Dmg, Exe)
             packageName = "Glider"
-            packageVersion = "1.0.0"
+            packageVersion = "${rootProject.version}"
+            version = "${rootProject.version}"
+            description = "Glider, open source password manager"
+            copyright = "© 2023 Tecknobit."
+            vendor = "Tecknobit"
+            licenseFile.set(project.file("LICENSE"))
+            macOS {
+                bundleID = "com.tecknobit.glider"
+                iconFile.set(project.file("icons/logo.icns"))
+            }
+            windows {
+                //iconFile.set(project.file("icons/logo.ico"))
+            }
+            linux {
+                iconFile.set(project.file("icons/logo.png"))
+            }
+        }
+        buildTypes.release.proguard {
+            configurationFiles.from(project.file("compose-desktop.pro"))
+            obfuscate.set(true)
         }
     }
 }

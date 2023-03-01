@@ -146,8 +146,7 @@ class Main : RequestManager() {
                             else
                                 resetSession("The session has been deleted")
                         } catch (a: IllegalArgumentException) {
-                            // TODO: TO REMOVE THIS AFTER FIXED IT
-                            a.printStackTrace()
+                            resetSession("This device has been disconnected")
                         } catch (s: SocketException) {
                             resetSession("The session has been deleted")
                         } finally {

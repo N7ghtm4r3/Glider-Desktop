@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.glider.helpers.GliderLauncher.Operation
-import com.tecknobit.glider.helpers.GliderLauncher.Operation.DELETE_ACCOUNT
+import com.tecknobit.glider.helpers.GliderLauncher.Operation.DELETE_SESSION
 import com.tecknobit.glider.helpers.GliderLauncher.Operation.DISCONNECT
 import helpers.*
 import kotlinx.coroutines.CoroutineScope
@@ -96,7 +96,7 @@ class Sidebar : RequestManager() {
                                             color = Black
                                         )
                                     },
-                                    confirmAction = { manageSession(DELETE_ACCOUNT) },
+                                    confirmAction = { manageSession(DELETE_SESSION) },
                                 )
                                 showAlert()
                             })
@@ -170,14 +170,14 @@ class Sidebar : RequestManager() {
     /**
      * Method to manage the user session
      *
-     * @param operation: the operation to execute -> [Operation.DISCONNECT], [Operation.DELETE_ACCOUNT]
+     * @param operation: the operation to execute -> [Operation.DISCONNECT], [Operation.DELETE_SESSION]
      * */
     private fun manageSession(operation: Operation) {
         setRequestPayload(operation, null)
         socketManager!!.writeContent(payload)
         response = JSONObject(socketManager!!.readContent())
         if (successfulResponse()) {
-            if (operation == DELETE_ACCOUNT)
+            if (operation == DELETE_SESSION)
                 showAlert.value = false
             resetSession(null)
         } else
