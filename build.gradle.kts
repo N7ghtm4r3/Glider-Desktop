@@ -43,7 +43,7 @@ compose.desktop {
     application {
         mainClass = "LauncherKt"
         nativeDistributions {
-            targetFormats(Deb, Rpm, Dmg, Exe)
+            targetFormats(Deb, Rpm, Pkg, Exe)
             packageName = "Glider"
             packageVersion = "${rootProject.version}"
             version = "${rootProject.version}"
@@ -56,7 +56,7 @@ compose.desktop {
                 iconFile.set(project.file("icons/logo.icns"))
             }
             windows {
-                //iconFile.set(project.file("icons/logo.ico"))
+                iconFile.set(project.file("icons/logo.ico"))
             }
             linux {
                 iconFile.set(project.file("icons/logo.png"))

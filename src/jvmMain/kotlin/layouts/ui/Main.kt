@@ -22,7 +22,6 @@ import helpers.User.Companion.passwords
 import helpers.User.Companion.user
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import layouts.components.sections.Sidebar
@@ -114,7 +113,7 @@ class Main : RequestManager() {
      */
     private fun refreshUserData() {
         continueRefreshData = true
-        CoroutineScope(Default).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             var currentPasswords = JSONArray()
             var currentDevices = JSONArray()
             while (true) {
@@ -145,8 +144,7 @@ class Main : RequestManager() {
                                 resetSession("This device has been disconnected")
                             else
                                 resetSession("The session has been deleted")
-                        } catch (a: IllegalArgumentException) {
-                            resetSession("This device has been disconnected")
+                        } catch (_: IllegalArgumentException) {
                         } catch (s: SocketException) {
                             resetSession("The session has been deleted")
                         } finally {
