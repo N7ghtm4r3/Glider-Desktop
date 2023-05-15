@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.tecknobit"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     google()
@@ -18,7 +18,7 @@ repositories {
 kotlin {
     jvm {
         compilations.all {
-            kotlinOptions.jvmTarget = "17"
+            kotlinOptions.jvmTarget = "18"
         }
         withJava()
     }
@@ -28,7 +28,7 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation("com.github.N7ghtm4r3:Glider:1.0.2")
                 implementation("org.json:json:20220924")
-                implementation("com.github.N7ghtm4r3:APIManager:2.1.0")
+                implementation("com.github.N7ghtm4r3:APIManager:2.1.2")
                 api(compose.foundation)
                 api(compose.animation)
                 api(compose.materialIconsExtended)

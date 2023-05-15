@@ -23,6 +23,9 @@ import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 
+/**
+ * **navigator** -> the navigator instance is useful to manage the navigation between the screens of the application
+ */
 lateinit var navigator: Navigator
 
 /**

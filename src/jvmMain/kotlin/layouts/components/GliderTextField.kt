@@ -1,5 +1,6 @@
 package layouts.components
 
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -10,6 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import helpers.primaryColor
 import helpers.redColor
@@ -44,7 +46,7 @@ fun GliderTextField(
     leadingOnClick: (() -> Unit) = {},
     trailingIcon: ImageVector,
     trailingOnClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.width(280.dp)
 ) {
     OutlinedTextField(
         modifier = modifier,
