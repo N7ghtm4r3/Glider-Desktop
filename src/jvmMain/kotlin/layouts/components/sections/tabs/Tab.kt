@@ -1,6 +1,8 @@
 package layouts.components.sections.tabs
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,6 +44,7 @@ abstract class Tab : RequestManager() {
         coroutineScope = rememberCoroutineScope()
         scaffoldState = rememberScaffoldState()
         Scaffold(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
             scaffoldState = scaffoldState,
             backgroundColor = primaryColor,
             contentColor = primaryColor,
@@ -57,7 +60,7 @@ abstract class Tab : RequestManager() {
         ) {
             Divider(thickness = 1.dp, color = Color.White)
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = 30.dp),
+                modifier = Modifier.padding(top = 30.dp),
                 content = content
             )
         }
