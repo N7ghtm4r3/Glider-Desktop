@@ -112,7 +112,7 @@ class Sidebar : RequestManager() {
                             fontSize = 12.sp
                         )
                         Text(
-                            text = "v. 1.0.0",
+                            text = "v. 1.0.1",
                             color = Color.White,
                             fontSize = 10.sp
                         )

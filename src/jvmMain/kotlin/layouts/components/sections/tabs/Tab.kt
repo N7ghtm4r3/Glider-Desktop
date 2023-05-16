@@ -44,7 +44,6 @@ abstract class Tab : RequestManager() {
         coroutineScope = rememberCoroutineScope()
         scaffoldState = rememberScaffoldState()
         Scaffold(
-            modifier = Modifier.verticalScroll(rememberScrollState()),
             scaffoldState = scaffoldState,
             backgroundColor = primaryColor,
             contentColor = primaryColor,
@@ -60,7 +59,7 @@ abstract class Tab : RequestManager() {
         ) {
             Divider(thickness = 1.dp, color = Color.White)
             Column(
-                modifier = Modifier.padding(top = 30.dp),
+                modifier = Modifier.wrapContentHeight().padding(top = 30.dp).verticalScroll(rememberScrollState()),
                 content = content
             )
         }

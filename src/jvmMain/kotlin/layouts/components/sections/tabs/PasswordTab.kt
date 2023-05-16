@@ -185,9 +185,8 @@ class PasswordTab : Tab() {
                         }
                         val scopes = password.scopesSorted.toList()
                         if (scopes.isNotEmpty()) {
-                            // TODO: MANAGE WHEN IS CREATED WHEN SCROLLING COLUMN
                             LazyVerticalGrid(
-                                modifier = Modifier.padding(start = 20.dp, top = 10.dp),
+                                modifier = Modifier.height(150.dp).padding(start = 20.dp, top = 10.dp),
                                 columns = GridCells.Adaptive(140.dp),
                                 contentPadding = PaddingValues(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
