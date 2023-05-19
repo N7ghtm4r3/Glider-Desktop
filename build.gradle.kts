@@ -1,4 +1,7 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat.*
+import java.util.*
 
 plugins {
     kotlin("multiplatform")
@@ -26,7 +29,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation("com.github.N7ghtm4r3:Glider:1.0.2")
+                implementation("com.github.N7ghtm4r3:Glider:0.0.0.8")
                 implementation("org.json:json:20220924")
                 implementation("com.github.N7ghtm4r3:APIManager:2.1.2")
                 api(compose.foundation)
@@ -57,9 +60,16 @@ compose.desktop {
             }
             windows {
                 iconFile.set(project.file("icons/logo.ico"))
+                console = true
+                upgradeUuid = UUID.randomUUID().toString()
             }
             linux {
                 iconFile.set(project.file("icons/logo.png"))
+                packageName = "com-tecknobit-glider"
+                debMaintainer = "infotecknobitcompany@gmail.com"
+                appRelease = "1.0.1"
+                appCategory = "PERSONALIZATION"
+                rpmLicenseType = "MIT"
             }
         }
         buildTypes.release.proguard {

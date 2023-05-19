@@ -2,6 +2,7 @@ package helpers
 
 import androidx.compose.runtime.mutableStateListOf
 import com.tecknobit.glider.records.Device
+import com.tecknobit.glider.records.Device.DevicePermission
 import com.tecknobit.glider.records.Password
 import com.tecknobit.glider.records.Session
 import com.tecknobit.glider.records.Session.SessionKeys.*
@@ -42,6 +43,11 @@ class User : Session(
         var user: User = User()
 
         /**
+         * `permission` the current user permission
+         */
+        lateinit var permission: DevicePermission
+
+        /**
          * **passwords** -> list of the [Password] of the session
          */
         val passwords: MutableList<Password> = mutableStateListOf()
@@ -76,6 +82,38 @@ class User : Session(
         } catch (e: BackingStoreException) {
             throw RuntimeException(e)
         }
+    }
+
+    /**
+     * Method to check whether a device has the [DevicePermission.ADMIN] or
+     * [DevicePermission.PASSWORD_MANAGER] permissions <br></br>
+     * No-any params required
+     *
+     * @return whether a device has the right permission
+     */
+    fun isPasswordManager(): Boolean {
+        return permission == DevicePermission.PASSWORD_MANAGER || isAdmin()
+    }
+
+    /**
+     * Method to check whether a device has the [DevicePermission.ADMIN] or
+     * [DevicePermission.ACCOUNT_MANAGER] permissions <br></br>
+     * No-any params required
+     *
+     * @return whether a device has the right permission
+     */
+    fun isAccountManager(): Boolean {
+        return permission == DevicePermission.ACCOUNT_MANAGER || isAdmin()
+    }
+
+    /**
+     * Method to check whether a device has the [DevicePermission.ADMIN] permission <br></br>
+     * No-any params required
+     *
+     * @return whether a device has the right permission
+     */
+    fun isAdmin(): Boolean {
+        return permission == DevicePermission.ADMIN
     }
 
 }

@@ -23,6 +23,7 @@ import com.tecknobit.glider.records.Password
 import com.tecknobit.glider.records.Password.PasswordKeys
 import com.tecknobit.glider.records.Password.Status
 import helpers.*
+import helpers.User.Companion.user
 import layouts.components.GliderButton
 import layouts.components.GliderTextField
 import org.json.JSONObject
@@ -67,54 +68,62 @@ class PasswordTab : Tab() {
                                 fontSize = 45.sp
                             )
                         }
-                        Row(Modifier.padding(top = 10.dp)) {
-                            OutlinedButton(
-                                shape = RoundedCornerShape(100.dp),
-                                border = BorderStroke(2.dp, redColor),
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = redColor
-                                ),
-                                onClick = {
-                                    managePassword(
-                                        DELETE_PASSWORD, password.tail,
-                                        if (passwordStatus == Status.DELETED)
-                                            "Password permanently deleted successfully"
-                                        else
-                                            "Password deleted successfully"
+                        Row(modifier = Modifier.padding(top = 10.dp)) {
+                            if (user.isPasswordManager()) {
+                                OutlinedButton(
+                                    shape = RoundedCornerShape(100.dp),
+                                    border = BorderStroke(2.dp, redColor),
+                                    colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = redColor
+                                    ),
+                                    onClick = {
+                                        managePassword(
+                                            DELETE_PASSWORD, password.tail,
+                                            if (passwordStatus == Status.DELETED)
+                                                "Password permanently deleted successfully"
+                                            else
+                                                "Password deleted successfully"
+                                        )
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Default.Delete,
+                                        contentDescription = null,
+                                        tint = Color.White
                                     )
                                 }
-                            ) {
-                                Icon(
-                                    imageVector = Default.Delete,
-                                    contentDescription = null,
-                                    tint = Color.White
-                                )
+                                Spacer(Modifier.width(20.dp))
                             }
-                            Spacer(Modifier.width(20.dp))
-                            OutlinedButton(
-                                shape = RoundedCornerShape(100.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = Color.White
-                                ),
-                                onClick = {
-                                    if (passwordStatus == Status.DELETED)
-                                        managePassword(
-                                            RECOVER_PASSWORD,
-                                            password.tail,
-                                            "Password recovered successfully"
-                                        )
-                                    else {
-                                        val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
-                                        clipboard.setContents(StringSelection(password.password), null)
-                                        showSnack(coroutineScope, scaffoldState, "Password copied successfully")
+                            if (user.isPasswordManager() || passwordStatus != Status.DELETED) {
+                                OutlinedButton(
+                                    shape = RoundedCornerShape(100.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = Color.White
+                                    ),
+                                    onClick = {
+                                        if (passwordStatus == Status.DELETED)
+                                            managePassword(
+                                                RECOVER_PASSWORD,
+                                                password.tail,
+                                                "Password recovered successfully"
+                                            )
+                                        else {
+                                            val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                                            clipboard.setContents(StringSelection(password.password), null)
+                                            showSnack(coroutineScope, scaffoldState, "Password copied successfully")
+                                        }
                                     }
+                                ) {
+                                    Icon(
+                                        imageVector =
+                                        if (passwordStatus == Status.ACTIVE)
+                                            Default.ContentCopy
+                                        else
+                                            Default.Restore,
+                                        contentDescription = null,
+                                        tint = primaryColor
+                                    )
                                 }
-                            ) {
-                                Icon(
-                                    imageVector = if (passwordStatus == Status.ACTIVE) Default.ContentCopy else Default.Restore,
-                                    contentDescription = null,
-                                    tint = primaryColor
-                                )
                             }
                         }
                     }
@@ -157,7 +166,7 @@ class PasswordTab : Tab() {
                             }
                             Modifier.padding(top = 10.dp)
                             Row {
-                                if (passwordStatus == Status.ACTIVE) {
+                                if (user.isPasswordManager() && passwordStatus == Status.ACTIVE) {
                                     Row {
                                         OutlinedButton(
                                             shape = RoundedCornerShape(100),
@@ -195,7 +204,7 @@ class PasswordTab : Tab() {
                                 items(scopes) { scope ->
                                     TextButton(
                                         onClick = {
-                                            if (passwordStatus == Status.ACTIVE) {
+                                            if (user.isPasswordManager() && passwordStatus == Status.ACTIVE) {
                                                 createPopupScope(
                                                     "Edit an old scope", "Edit scope",
                                                     "The scope to edit", "Edit", password.tail,
@@ -215,7 +224,7 @@ class PasswordTab : Tab() {
                                                     maxLines = 1
                                                 )
                                             }
-                                            if (passwordStatus == Status.ACTIVE) {
+                                            if (user.isPasswordManager() && passwordStatus == Status.ACTIVE) {
                                                 Column(
                                                     modifier = Modifier.weight(1f).fillMaxHeight(),
                                                     horizontalAlignment = Alignment.End,
@@ -267,7 +276,7 @@ class PasswordTab : Tab() {
      * @param tail: the tail of the password to manage
      * @param oldScope: the old scope to remove if filled
      * @param message: the message to show in the snackbar
-     * */
+     */
     private fun createPopupScope(
         title: String, hint: String, snackHint: String, btnText: String, tail: String,
         oldScope: String? = null, message: String
@@ -336,7 +345,7 @@ class PasswordTab : Tab() {
      * @param scope: the scope to manage
      * @param oldScope: the old scope to remove if filled
      * @param message: the message to show in the snackbar
-     * */
+     */
     private fun manageScope(
         operation: Operation,
         tail: String,
@@ -362,7 +371,7 @@ class PasswordTab : Tab() {
      * @param operation: the operation to execute -> [Operation.DELETE_PASSWORD], [Operation.RECOVER_PASSWORD]
      * @param tail: the tail of the password to manage
      * @param message: the message to show in the snackbar
-     * */
+     */
     private fun managePassword(operation: Operation, tail: String, message: String) {
         setRequestPayload(operation, null)
         payload!!.put(PasswordKeys.tail.name, tail)

@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.tecknobit.glider.helpers.DatabaseManager.Table
 import com.tecknobit.glider.helpers.GliderLauncher.Operation.REFRESH_DATA
 import com.tecknobit.glider.records.Device
+import com.tecknobit.glider.records.Device.DeviceKeys.permission
+import com.tecknobit.glider.records.Device.DevicePermission.valueOf
 import com.tecknobit.glider.records.Password
 import helpers.*
 import helpers.User.Companion.devices
@@ -124,6 +126,7 @@ class Main : RequestManager() {
                         try {
                             response = JSONObject(socketManager!!.readContent())
                             if (successfulResponse()) {
+                                User.permission = valueOf(response.getString(permission.name))
                                 val jPasswords = response.getJSONArray(Table.passwords.name)
                                 val sPasswords = jPasswords.toString()
                                 if (currentPasswords.toString() != sPasswords) {

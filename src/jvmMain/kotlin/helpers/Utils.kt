@@ -53,7 +53,7 @@ fun fromHexToColor(hex: String): Color {
  * @param scope: scope manager
  * @param scaffoldState: state of the [Scaffold]
  * @param message: message to show
- * */
+ */
 fun showSnack(scope: CoroutineScope, scaffoldState: ScaffoldState, message: String) {
     scope.launch {
         scaffoldState.snackbarHostState.showSnackbar(message)

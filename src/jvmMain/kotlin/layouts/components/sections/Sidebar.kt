@@ -17,6 +17,7 @@ import com.tecknobit.glider.helpers.GliderLauncher.Operation
 import com.tecknobit.glider.helpers.GliderLauncher.Operation.DELETE_SESSION
 import com.tecknobit.glider.helpers.GliderLauncher.Operation.DISCONNECT
 import helpers.*
+import helpers.User.Companion.user
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.forms.CreateForm
 import layouts.components.forms.InsertForm
@@ -69,8 +70,18 @@ class Sidebar : RequestManager() {
         ) {
             Column {
                 val menuItems = mapOf(
-                    Pair("Create", Pair(Default.Add) { CreateForm().createPassword() }),
-                    Pair("Insert", Pair(Default.Create) { InsertForm().insertPassword() }),
+                    Pair("Create", Pair(Default.Add) {
+                        if (user.isPasswordManager())
+                            CreateForm().createPassword()
+                        else
+                            showNotAuthorizedSnack()
+                    }),
+                    Pair("Insert", Pair(Default.Create) {
+                        if (user.isPasswordManager())
+                            InsertForm().insertPassword()
+                        else
+                            showNotAuthorizedSnack()
+                    }),
                     Pair("Passwords", Pair(Default.ViewList) { showDevices.value = false }),
                     Pair("Account", Pair(Default.ManageAccounts) { showDevices.value = true })
                 )
@@ -87,18 +98,21 @@ class Sidebar : RequestManager() {
                         val bottomItems = mapOf(
                             Pair("Logout", Pair(Default.Logout) { manageSession(DISCONNECT) }),
                             Pair("Delete", Pair(Default.NoAccounts) {
-                                fillAlertContent(
-                                    title = "Account deletion",
-                                    text = {
-                                        Text(
-                                            text = "This will delete permanently all the data of the account and all the " +
-                                                    "passwords will be unrecoverable, confirm?",
-                                            color = Black
-                                        )
-                                    },
-                                    confirmAction = { manageSession(DELETE_SESSION) },
-                                )
-                                showAlert()
+                                if (user.isAdmin()) {
+                                    fillAlertContent(
+                                        title = "Account deletion",
+                                        text = {
+                                            Text(
+                                                text = "This will delete permanently all the data of the account and all the " +
+                                                        "passwords will be unrecoverable, confirm?",
+                                                color = Black
+                                            )
+                                        },
+                                        confirmAction = { manageSession(DELETE_SESSION) },
+                                    )
+                                    showAlert()
+                                } else
+                                    showNotAuthorizedSnack()
                             })
                         )
                         Divider(thickness = 1.dp, color = Color.White)
@@ -168,10 +182,18 @@ class Sidebar : RequestManager() {
     }
 
     /**
+     * Method to show the `not authorized` snackbar.
+     * No-any params required
+     */
+    private fun showNotAuthorizedSnack() {
+        showSnack(coroutineScope, scaffoldState, "Not authorized")
+    }
+
+    /**
      * Method to manage the user session
      *
      * @param operation: the operation to execute -> [Operation.DISCONNECT], [Operation.DELETE_SESSION]
-     * */
+     */
     private fun manageSession(operation: Operation) {
         setRequestPayload(operation, null)
         socketManager!!.writeContent(payload)

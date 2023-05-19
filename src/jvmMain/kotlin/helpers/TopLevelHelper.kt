@@ -208,7 +208,7 @@ fun createPopup() {
  * Method to show a snackbar from a popup
  *
  * @param message: message to show
- * */
+ */
 fun showPopupSnack(message: String) {
     showSnack(coroutineScope, scaffoldState, message)
 }

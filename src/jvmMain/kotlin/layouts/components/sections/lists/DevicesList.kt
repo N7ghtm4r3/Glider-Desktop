@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.tecknobit.glider.records.Device
 import com.tecknobit.glider.records.Device.Type.DESKTOP
 import helpers.User.Companion.devices
+import helpers.User.Companion.permission
 import helpers.User.Companion.user
 import helpers.backgroundColor
 import helpers.primaryColor
@@ -67,6 +68,7 @@ class DevicesList : List() {
                         createCardHeader("Server details")
                         createCardItem(Modifier.padding(start = 25.dp, top = 10.dp), "Address", user.hostAddress)
                         createCardItem(key = "Port", value = user.hostPort)
+                        createCardItem(key = "Permission", value = permission)
                         createCardHeader("Security")
                         createCardItem(Modifier.padding(start = 25.dp, top = 10.dp), "Single use", user.isSingleUseMode)
                         createCardItem(key = "QR Code login", value = user.isQRCodeLoginEnabled)
@@ -117,7 +119,11 @@ class DevicesList : List() {
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 Icon(
-                                                    imageVector = if (device.type == DESKTOP) Default.Computer else Default.PhoneAndroid,
+                                                    imageVector =
+                                                    if (device.type == DESKTOP)
+                                                        Default.Computer
+                                                    else
+                                                        Default.PhoneAndroid,
                                                     contentDescription = null,
                                                     tint = Color.White
                                                 )
@@ -142,7 +148,7 @@ class DevicesList : List() {
     /**
      * Method to create a card header
      * @param header: header value to create
-     * */
+     */
     @Composable
     private fun createCardHeader(header: String) {
         Row(
@@ -163,7 +169,7 @@ class DevicesList : List() {
      * @param modifier: modifier of the layout for the card item
      * @param key: key of the card item to create
      * @param value: value of the card item to create
-     * */
+     */
     @Composable
     private fun createCardItem(modifier: Modifier = Modifier.padding(start = 25.dp), key: String, value: Any?) {
         Row(
