@@ -29,7 +29,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation("com.github.N7ghtm4r3:Glider:0.0.0.8")
+                implementation("com.github.N7ghtm4r3:Glider:1.0.3")
                 implementation("org.json:json:20220924")
                 implementation("com.github.N7ghtm4r3:APIManager:2.1.2")
                 api(compose.foundation)
