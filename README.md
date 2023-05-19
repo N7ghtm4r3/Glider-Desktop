@@ -22,6 +22,7 @@ platforms releases steps:
   - <a href="https://play.google.com/store/apps/details?id=com.tecknobit.glider">Android</a> -> **available!**
   - iOS
 -  <a href="https://github.com/N7ghtm4r3/Glider-Desktop/releases/tag/1.0.0">Desktop Glider version</a> -> **available!**
+- <a href="https://github.com/N7ghtm4r3/Glider/tree/main/documd/GliderBackend.md">Backend service "out-of-the-box"</a>
 
 ## Usages
 
