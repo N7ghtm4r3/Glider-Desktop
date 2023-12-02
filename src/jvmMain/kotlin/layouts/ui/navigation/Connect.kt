@@ -24,8 +24,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation.Companion.None
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tecknobit.apimanager.apis.SocketManager
-import com.tecknobit.apimanager.apis.encryption.aes.ClientCipher.Algorithm.CBC_ALGORITHM
+import com.tecknobit.apimanager.apis.encryption.BaseCipher.Algorithm.CBC_ALGORITHM
+import com.tecknobit.apimanager.apis.sockets.SocketManager
+import com.tecknobit.apimanager.apis.sockets.encrypteds.AESSocketManager
 import com.tecknobit.glider.helpers.GliderLauncher.GliderKeys.ope
 import com.tecknobit.glider.helpers.GliderLauncher.Operation
 import com.tecknobit.glider.helpers.GliderLauncher.Operation.CONNECT
@@ -257,10 +258,10 @@ class Connect : RequestManager() {
                                     onClick = {
                                         setRequestPayload(GET_PUBLIC_KEYS, host, password, port)
                                         if (payload != null) {
-                                            socketManager = SocketManager(host, port.toInt())
-                                            socketManager!!.writeContent(payload)
-                                            response = JSONObject(socketManager!!.readContent())
-                                            socketManager = SocketManager(
+                                            val plainSocketManager = SocketManager(host, port.toInt())
+                                            plainSocketManager.writeContent(payload)
+                                            response = JSONObject(plainSocketManager.readContent())
+                                            socketManager = AESSocketManager(
                                                 host,
                                                 port.toInt(),
                                                 response.getString(ivSpec.name),

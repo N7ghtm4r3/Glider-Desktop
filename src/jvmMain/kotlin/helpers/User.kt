@@ -35,7 +35,7 @@ class User : Session(
         /**
          * `prefs` instance to manage the information of the user
          */
-        val prefs: Preferences = Preferences.userRoot().node("/user/glider")
+        val prefs: Preferences = Preferences.userRoot().node("/user/tecknobit/glider/desktop")
 
         /**
          * `user` instance to manage statically the session of the user

@@ -1,8 +1,8 @@
 package helpers
 
-import com.tecknobit.apimanager.apis.SocketManager
-import com.tecknobit.apimanager.apis.SocketManager.StandardResponseCode.*
-import com.tecknobit.apimanager.apis.encryption.aes.ClientCipher.Algorithm.CBC_ALGORITHM
+import com.tecknobit.apimanager.apis.encryption.BaseCipher.Algorithm.CBC_ALGORITHM
+import com.tecknobit.apimanager.apis.sockets.SocketManager.StandardResponseCode.*
+import com.tecknobit.apimanager.apis.sockets.encrypteds.AESSocketManager
 import com.tecknobit.glider.helpers.GliderLauncher
 import com.tecknobit.glider.helpers.GliderLauncher.GliderKeys.statusCode
 import com.tecknobit.glider.records.Device.DeviceKeys
@@ -35,9 +35,9 @@ open class RequestManager {
         /**
          * **socketManager** -> the manager of the requests
          */
-        var socketManager: SocketManager? =
+        var socketManager: AESSocketManager? =
             if (user.token != null)
-                SocketManager(user.hostAddress, user.hostPort, user.ivSpec, user.secretKey, CBC_ALGORITHM)
+                AESSocketManager(user.hostAddress, user.hostPort, user.ivSpec, user.secretKey, CBC_ALGORITHM)
             else
                 null
 

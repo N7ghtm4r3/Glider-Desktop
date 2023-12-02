@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_VARIABLE")
-
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat.*
 import java.util.*
 
@@ -9,7 +7,7 @@ plugins {
 }
 
 group = "com.tecknobit"
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
     google()
@@ -30,8 +28,8 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation("com.github.N7ghtm4r3:Glider:1.0.3")
-                implementation("org.json:json:20220924")
-                implementation("com.github.N7ghtm4r3:APIManager:2.1.2")
+                implementation("org.json:json:20230227")
+                implementation("com.github.N7ghtm4r3:APIManager:2.1.8")
                 api(compose.foundation)
                 api(compose.animation)
                 api(compose.materialIconsExtended)
@@ -60,14 +58,13 @@ compose.desktop {
             }
             windows {
                 iconFile.set(project.file("icons/logo.ico"))
-                console = true
                 upgradeUuid = UUID.randomUUID().toString()
             }
             linux {
                 iconFile.set(project.file("icons/logo.png"))
                 packageName = "com-tecknobit-glider"
                 debMaintainer = "infotecknobitcompany@gmail.com"
-                appRelease = "1.0.1"
+                appRelease = "1.0.2"
                 appCategory = "PERSONALIZATION"
                 rpmLicenseType = "MIT"
             }

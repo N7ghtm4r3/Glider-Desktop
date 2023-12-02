@@ -34,7 +34,7 @@ class SplashScreen {
      */
     @Composable
     @Preview
-    fun showSplashScreen(modifier: Modifier = Modifier) {
+    fun showSplashScreen() {
         val blink = remember { Animatable(0f) }
         LaunchedEffect(key1 = true, block = {
             blink.animateTo(
