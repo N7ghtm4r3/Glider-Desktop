@@ -260,22 +260,26 @@ class Connect : RequestManager() {
                                         if (payload != null) {
                                             val plainSocketManager = SocketManager(host, port.toInt())
                                             plainSocketManager.writeContent(payload)
-                                            response = JSONObject(plainSocketManager.readContent())
-                                            socketManager = AESSocketManager(
-                                                host,
-                                                port.toInt(),
-                                                response.getString(ivSpec.name),
-                                                response.getString(secretKey.name),
-                                                CBC_ALGORITHM
-                                            )
-                                            payload!!.put(ope.name, CONNECT)
-                                            socketManager!!.writeContent(payload)
-                                            response = JSONObject(socketManager!!.readContent())
-                                            if (successfulResponse()) {
-                                                user.insertUserSession(response.getJSONObject(session.name))
-                                                navigator.navigate(mainScreen.name)
-                                            } else
+                                            try {
+                                                response = JSONObject(plainSocketManager.readContent())
+                                                socketManager = AESSocketManager(
+                                                    host,
+                                                    port.toInt(),
+                                                    response.getString(ivSpec.name),
+                                                    response.getString(secretKey.name),
+                                                    CBC_ALGORITHM
+                                                )
+                                                payload!!.put(ope.name, CONNECT)
+                                                socketManager!!.writeContent(payload)
+                                                response = JSONObject(socketManager!!.readContent())
+                                                if (successfulResponse()) {
+                                                    user.insertUserSession(response.getJSONObject(session.name))
+                                                    navigator.navigate(mainScreen.name)
+                                                } else
+                                                    showSnack(scope, scaffoldState, "Operation failed")
+                                            } catch (e: Exception) {
                                                 showSnack(scope, scaffoldState, "Operation failed")
+                                            }
                                         }
                                     },
                                     text = "Connect"
